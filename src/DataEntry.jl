@@ -1,9 +1,18 @@
 using Format
 using JLD2, FileIO
-export DataEntry, set_value!, get_folder_path, get_group_path
+export DataEntry, set_value!
 export dm_save, dm_load, dm_load_from_task, dm_check
 
-" Locator for a single data entry. Uniquely defined by a set of parameters and their corresponding formatting strings. The parameter sets are divided into folder and group hierarchy. "
+""" 
+Locator for a single data entry. Uniquely defined by a set of parameters and their corresponding formatting strings. The parameter sets are divided into folder and group hierarchy.
+
+**Fields**
+- `root` -- the root directory of the data entry.
+- `format_dict`     -- the dictionary containing formattors of corresponding parameters.
+- `value_dict`      -- the dictionary containing valuess of corresponding parameters.
+- `folder_entries`  -- the list of all parameters which define the file hierarchy of the data entry.
+- `group_entries`   -- the list of all parameters which define the group hierarchy of the data entry.
+"""
 struct DataEntry
     root::String
     format_dict::Dict{String,String}

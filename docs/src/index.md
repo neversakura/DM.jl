@@ -1,5 +1,6 @@
-# DM.jl Documentation
+# HOME
 
-```@docs
-    DataEntry(root, format_dict, folder_entries, group_entries)
+```@autodocs
+Modules = [DM]
+Private = false
 ```

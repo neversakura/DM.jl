@@ -16,6 +16,11 @@ function TaskManager(name; root="./task")
     TaskManager(task_file, task_dict, param_file, param_dict)
 end
 
+"""
+    load_task_from_json(name; root="./task")
+
+Load task from task configuration file.
+"""
 function load_task_from_json(name; root="./task")
     t = TaskManager(name, root=root)
     d = _create_data_entry_from_task(t)
