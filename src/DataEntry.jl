@@ -1,9 +1,18 @@
 using Format
 using JLD2, FileIO
-export DataEntry, set_value!, get_folder_path, get_group_path
+export DataEntry, set_value!
 export dm_save, dm_load, dm_load_from_task, dm_check
 
-" Locator for a single data entry. Uniquely defined by a set of parameters and their corresponding formatting strings. The parameter sets are divided into folder and group hierarchy. "
+"""
+Locator for a single data entry. Uniquely defined by a set of parameters and their corresponding formatting strings. The parameter sets are divided into folder and group hierarchy.
+
+**Fields**
+- `root` -- the root directory of the data entry.
+- `format_dict`     -- the dictionary containing formattors of corresponding parameters.
+- `value_dict`      -- the dictionary containing valuess of corresponding parameters.
+- `folder_entries`  -- the list of all parameters which define the file hierarchy of the data entry.
+- `group_entries`   -- the list of all parameters which define the group hierarchy of the data entry.
+"""
 struct DataEntry
     root::String
     format_dict::Dict{String,String}
@@ -15,17 +24,17 @@ end
 """
     DataEntry(root, format_dict, folder_entries, group_entries)
 
-Initialize a DataEntry type with empty values.
+Initialize a DataEntry type with empty values. `folder_entries` and `group_entries` are lists of their respective hierarchies.
 """
 function DataEntry(root, format_dict, folder_entries, group_entries)
     value_dict=Dict{String, Union{Number, String, Nothing}}()
     for folders in folder_entries
-        for n in folders
+        for n in sort(folders)
             value_dict[n]=nothing
         end
     end
     for groups in group_entries
-        for n in groups
+        for n in sort(groups)
             value_dict[n]=nothing
         end
     end
@@ -83,7 +92,11 @@ function get_group_path(d::DataEntry)
 end
 
 # ================ save function ===============
+"""
+    dm_save(d::DataEntry, file_name::String, groups...)
 
+Save data to entry point `d` with file name `file_name`. Data are specified by their data names and values.
+"""
 function dm_save(d::DataEntry, file_name::String, groups...)
     folder_path = get_folder_path(d)
     group_path = get_group_path(d)
