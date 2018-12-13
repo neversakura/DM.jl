@@ -2,6 +2,7 @@ using Format
 using JLD2, FileIO
 export DataEntry, set_value!
 export dm_save, dm_load, dm_load_from_task, dm_check
+export get_folder_path, get_group_path # export for testing
 
 """
 Locator for a single data entry. Uniquely defined by a set of parameters and their corresponding formatting strings. The parameter sets are divided into folder and group hierarchy.
