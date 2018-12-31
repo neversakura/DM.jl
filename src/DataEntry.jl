@@ -1,76 +1,34 @@
 using Format
-using JLD2, FileIO
-export DataEntry, set_value!
-export dm_save, dm_load, dm_load_from_task, dm_check
-export get_folder_path, get_group_path # export for testing
+import FileIO.save, FileIO.load
+using JLD2
+export DataEntry
 
 """
-Locator for a single data entry. Uniquely defined by a set of parameters and their corresponding formatting strings. The parameter sets are divided into folder and group hierarchy.
+Locator for a single data entry, uniquely defined by parameter names partitioned into file system path and group path.
 
 **Fields**
 - `root` -- the root directory of the data entry.
-- `format_dict`     -- the dictionary containing formattors of corresponding parameters.
-- `value_dict`      -- the dictionary containing valuess of corresponding parameters.
-- `folder_entries`  -- the list of all parameters which define the file hierarchy of the data entry.
-- `group_entries`   -- the list of all parameters which define the group hierarchy of the data entry.
+- `folder_entries`  -- the ordered partition of parameters names which define the file system path of the data entry.
+- `group_entries`   -- the ordered partition of parameters names which define the group path of the data entry.
 """
 struct DataEntry
     root::String
-    format_dict::Dict{String,String}
-    value_dict::Dict{String, Union{Number, String, Nothing}}
     folder_entries::Array{Array{String,1},1}
     group_entries::Array{Array{String,1},1}
+    DataEntry(r, f, g) = new(r, [sort(i) for i in f], [sort(i) for i in g])
 end
 
-"""
-    DataEntry(root, format_dict, folder_entries, group_entries)
-
-Initialize a DataEntry type with empty values. `folder_entries` and `group_entries` are lists of their respective hierarchies.
-"""
-function DataEntry(root, format_dict, folder_entries, group_entries)
-    value_dict=Dict{String, Union{Number, String, Nothing}}()
-    for folders in folder_entries
-        for n in sort(folders)
-            value_dict[n]=nothing
-        end
-    end
-    for groups in group_entries
-        for n in sort(groups)
-            value_dict[n]=nothing
-        end
-    end
-    DataEntry(root, format_dict, value_dict, folder_entries, group_entries)
-end
 
 """
-    set_value!(data_entry, value, key)
+    print_params(format_dict, value_dict, key)
 
-Set the value of given parameters in DataEntry type. `key` and `value` can be a single key-value pair, or tuples of corresponding pairs.
-"""
-function set_value!(data_entry::DataEntry, value, key)
-    data_entry.value_dict[key]=value
-end
-
-function set_value!(data_entry::DataEntry, value, key::Array{String,1})
-    for (k,v) in zip(key, value)
-        data_entry.value_dict[k] = v
-    end
-end
-
-"""
-    print_params(format_dict, key)
-
-Print out the string representation of parameter set given by `key`. `key` can be a list of parameter sets. In this case, function will return a list of string representations.
+Print out the path of parameter set given by `key`. `format_dict` and `value_dict` are look-up tables for  parameter formatters and values respectively. `key` should be an valid partition of parameter names.
 """
 function print_params(format_dict,value_dict,key::Array{String,1})
     res = ""
     for name in key
-        if occursin("header",name)
-            res = entry[name]["value"]*"_"*res
-        else
-            data_string = cfmt(format_dict[name], value_dict[name])
-            res = res*name*"="*data_string*"_"
-        end
+        data_string = cfmt(format_dict[name], value_dict[name])
+        res = res*name*"="*data_string*"_"
     end
     res[1:end-1]
 end
@@ -81,26 +39,45 @@ function print_params(format_dict,value_dict,key::Array{Array{String,1},1})
         param_str = print_params(format_dict, value_dict, i)
         res = res * param_str * "/"
     end
-    res[1:end]
+    res
 end
 
-function get_folder_path(d::DataEntry)
-    joinpath(d.root, print_params(d.format_dict, d.value_dict, d.folder_entries))
+"""
+    get_folder_path(d::DataEntry, values)
+
+Print out the file system path given data entry `d` and corresponding `values`.
+"""
+function get_folder_path(d::DataEntry, values::Dict)
+    joinpath(d.root, print_params(get_param_set(), values, d.folder_entries))
 end
 
-function get_group_path(d::DataEntry)
-    print_params(d.format_dict, d.value_dict, d.group_entries)
+function get_folder_path(d::DataEntry, values)
+    v = Dict(values...)
+    joinpath(d.root, print_params(get_param_set(), v, d.folder_entries))
 end
 
+"""
+    get_group_path(d::DataEntry, values)
+
+Print out the group path given data entry `d` and corresponding `values`
+"""
+function get_group_path(d::DataEntry, values::Dict)
+    print_params(get_param_set(), values, d.group_entries)
+end
+
+function get_group_path(d::DataEntry, values)
+    v = Dict(values...)
+    print_params(get_param_set(), v, d.group_entries)
+end
 # ================ save function ===============
 """
-    dm_save(d::DataEntry, file_name::String, groups...)
+    save_jld2(d::DataEntry, file_name::String, groups...)
 
-Save data to entry point `d` with file name `file_name`. Data are specified by their data names and values.
+Save data to a jld2 file at entry point `d` with given `file_name`. Data are specified by their data names and values.
 """
-function dm_save(d::DataEntry, file_name::String, groups...)
-    folder_path = get_folder_path(d)
-    group_path = get_group_path(d)
+function save_jld2(d::DataEntry, v, file_name::String, groups...)
+    folder_path = get_folder_path(d, v)
+    group_path = get_group_path(d, v)
     mkpath(folder_path)
     file = joinpath(folder_path,file_name)
     jldopen(file, "a+") do f
@@ -115,46 +92,10 @@ function dm_save(d::DataEntry, file_name::String, groups...)
 end
 # =============== load function ================
 
-function dm_load(d::DataEntry, file_name::String, groups...)
-    folder_path = get_folder_path(d)
+function load_jld2(d::DataEntry, v, file_name::String, groups...)
+    folder_path = get_folder_path(d, v)
     file = joinpath(folder_path,file_name)
-    group_path = get_group_path(d)
-    names = [group_path * i for i in groups]
-    load(file, names...)
-end
-
-function dm_check(d::DataEntry, file_name::String, group_name::String)
-    folder_path = get_folder_path(d)
-    group_path = get_group_path(d)
-    file = joinpath(folder_path,file_name)
-    group = group_path * group_name
-    sub_groups = split(group,"/")
-    if !isfile(file)
-        return false
-    end
-    res = true
-    f = jldopen(file, "r")
-    g = f
-    for s in sub_groups
-        if haskey(g, s)
-            g = g[s]
-        else
-            res = false
-            break
-        end
-    end
-    close(f)
-    res
-end
-
-function dm_load_from_task(d::DataEntry, task_name, file_name::String, groups...;task_root="./task")
-    task_file = joinpath(task_root, task_name*".json")
-    task_dict = JSON.parsefile(task_file)
-    folder_entries = _namelist_from_task(task_dict, "folder_")
-    group_entries = _namelist_from_task(task_dict, "group_")
-    folder_path = joinpath(d.root, print_params(d.format_dict, d.value_dict, folder_entries))
-    file = joinpath(folder_path,file_name)
-    group_path = print_params(d.format_dict, d.value_dict, group_entries)
+    group_path = get_group_path(d, v)
     names = [group_path * i for i in groups]
     load(file, names...)
 end

@@ -1,28 +1,30 @@
 {
-  "root": "./data",
-  "type": "save",
-  "status": "running",
-  "folder_1": [
-    "alex",
-    "bob"
+  "finished_values": null,
+  "folder": [
+    [
+      "alex",
+      "bob"
+    ],
+    [
+      "eve",
+      "sandy"
+    ]
   ],
-  "folder_2": [
-    "eve",
-    "sandy"
-  ],
-  "group_1": [
+  "group": [
     "anna"
   ],
+  "root": "./data",
+  "status": "running",
   "target_values": {
     "alex": 1.2,
-    "bob": 4,
-    "eve": "8*pi",
-    "sandy": 0.21,
     "anna": [
       0.1,
       0.5,
       1
-    ]
+    ],
+    "bob": 4,
+    "eve": "8*pi",
+    "sandy": 0.21
   },
-  "finished_values": null
+  "type": "save"
 }

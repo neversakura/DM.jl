@@ -1,83 +1,62 @@
-import JSON
-export TaskManager, load_task_from_json
+export load_config_from_json
 
-struct TaskManager
-    task_file
-    task_dict
-    param_file
-    param_dict
-end
+"""
+    load_task_from_json(name)
 
-function TaskManager(name; root="./task")
-    task_file = joinpath(root, name*".json")
-    param_file = joinpath(root, "params.json")
-    task_dict = JSON.parsefile(task_file)
-    param_dict = JSON.parsefile(param_file)
-    TaskManager(task_file, task_dict, param_file, param_dict)
+Load task from task configuration file. Return a generator for all the `Task` defined in the "target_values" field of the configuration file.
+"""
+function load_config_from_json(name)
+    t = JSON.parsefile(name)
+    target_value_pair = parse_target_values(t["target_values"])
+    f(x)=typeof(x[1])==String ? [x] : x
+    DataEntry(t["root"], f(t["folder"]), f(t["group"])), create_task_list(target_value_pair...)
 end
 
 """
-    load_task_from_json(name; root="./task")
+    parse_target_values(t)
 
-Load task from task configuration file.
+Parse a dictionary of parameter names and their corresponding values into a list of key-value pairs. The values can be given as excutable code string.
+
+# Examples
+```julia-repl
+julia> parse_target_values(Dict("a"=>1,"b"=>2,"c"=>"range(0,stop=2)"))
+3-element Array{Any,1}:
+ "c" => 0:2
+ "b" => 2
+ "a" => 1
+```
 """
-function load_task_from_json(name; root="./task")
-    t = TaskManager(name, root=root)
-    d = _create_data_entry_from_task(t)
-    fv, fr = _load_params_from_task(t)
-    for i in fv
-        set_value!(d, i[2], i[1])
-    end
-    (range_name, range_iter) =_create_range_iterator(fr)
-    t, d, range_name, range_iter
-end
-
-function _create_data_entry_from_task(task::TaskManager)
-    t = task.task_dict
-    p = task.param_dict
-    folder_entry = _namelist_from_task(t, "folder_")
-    group_entry = _namelist_from_task(t, "group_")
-    DataEntry(t["root"],p,folder_entry,group_entry)
-end
-
-function _namelist_from_task(t::Dict, id_str::String)
-    entry = Array{Array{String,1},1}()
-    i = 1
-    while true
-        name = id_str * string(i)
-        if haskey(t, name) && (t[name]!=nothing)
-            push!(entry, t[name])
+function parse_target_values(t)
+    res = []
+    for (k,v) in t
+        if isa(v, String)
+            pv = eval(Meta.parse(v))
         else
-            break
+            pv = v
         end
-        i +=1
+        push!(res, k=>pv)
     end
-    entry
+    res
 end
 
-function _load_params_from_task(task::TaskManager)
-    t_values = task.task_dict["target_values"]
-    fix_values = []
-    ranges = []
-    if t_values != nothing
-        for (k,v) in t_values
-            if isa(v, String)
-                pv = eval(Meta.parse(v))
-            else
-                pv = v
-            end
-            if isa(pv, AbstractArray)
-                push!(ranges, (k,pv))
-            else
-                push!(fix_values, (k,pv))
-            end
-        end
-    end
-    fix_values, ranges
-end
+"""
+    create_task_list("name"=>value...)
 
-function _create_range_iterator(range_values)
-    range_name = [x[1] for x in range_values]
-    range_iter=Iterators.product([x[2] for x in range_values]...)
-    range_name, range_iter
+Create a task list generator from `name` - `value` pairs. `value` can be an iterable objects.
+
+# Examples
+```julia-repl
+julia> collect(create_task_list("a"=>1, "b"=>range(0,stop=2)))
+3-element Array{Tuple{Pair{String,Int64},Pair{String,Int64}},1}:
+ ("a" => 1, "b" => 0)
+ ("a" => 1, "b" => 1)
+ ("a" => 1, "b" => 2)
+```
+"""
+function create_task_list(args...)
+    res = []
+    for item in args
+        push!(res, (item.first=>x for x in item.second))
+    end
+    Iterators.product(res...)
 end
