@@ -1,7 +1,7 @@
 name = "DM"
 uuid = "a4c9a0b6-a80f-11e8-2852-5b4a901f9fec"
 authors = ["Sandy <neversakura@hotmail.com>"]
-version = "0.1.0"
+version = "0.2.0"
 
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
