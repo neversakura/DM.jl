@@ -49,3 +49,10 @@ All in all, to construct a `Data Entry` object, one needs to specify
   julia> DataEntry("root", [["alex", "bob"], ["eve"]], ["sandy", "anna"])
 ```
 The partitions of parameters are given by nested list of parameter names. The innermost lists will be sorted when constructing the `Data Entry` object. Together with a `Task`, a `Data Entry` provides unique file system and group path format strings for a single point/subspace of the total parameter space.
+
+## Public Documentation
+
+```@autodocs
+Modules = [DM]
+Private = false
+```
