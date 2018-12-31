@@ -1,6 +1,119 @@
 module DM
 
+import JSON
 include("DataEntry.jl")
 include("TaskManager.jl")
+export activate_param_set, get_param_set
+export save, load, check
 
+global _current_param_set
+
+ParamSet = Dict{String,String}
+
+"""
+    activate_param_set(d::Dict{String,String})
+
+Activate the parameter set from a dictionary `d`.
+"""
+function activate_param_set(d::Dict{String,String})
+    global _current_param_set = d
+end
+
+"""
+    activate_param_set(d::String)
+
+Activate the parameter set from a json file, whose path is given by `d`.
+"""
+function activate_param_set(d::String)
+    global _current_param_set = JSON.parsefile(d)
+end
+
+"""
+    activate_param_set(name=>formatter...)
+
+Activate the parameter set with given `name` and `formatter` pairs.
+"""
+function activate_param_set(args...)
+    global _current_param_set = ParamSet(args...)
+end
+
+"""
+    get_param_set()
+
+Return current active parameter set as a dictionary.
+"""
+function get_param_set()
+    _current_param_set
+end
+
+"""
+    check(d::DataEntry, v, file_name::String, group_name::String)
+
+Check whether a data group named `group_name` exists in a file named `file_name` at data entry `d`.
+"""
+function check(d::DataEntry, v, file_name::String, group_name::String)
+    folder_path = get_folder_path(d, v)
+    group_path = get_group_path(d, v)
+    file = joinpath(folder_path,file_name)
+    if !isfile(file)
+        return false
+    end
+    if occursin(".jld2", file_name)
+        group = group_path * group_name
+        sub_groups = split(group,"/")
+        res = true
+        f = jldopen(file, "r")
+        g = f
+        for s in sub_groups
+            if haskey(g, s)
+                g = g[s]
+            else
+                res = false
+                break
+            end
+        end
+        close(f)
+        res
+    else
+        error("Unsupported file format.")
+    end
+end
+
+"""
+    check(d::DataEntry, v, file_name::String)
+
+Check whether `file_name` exists at data entry `d`.
+"""
+function check(d::DataEntry, v, file_name::String)
+    folder_path = get_folder_path(d, v)
+    group_path = get_group_path(d, v)
+    file = joinpath(folder_path,file_name)
+    isfile(file)
+end
+
+"""
+    save(d::DataEntry, v, file_name::String, "group_name_1", "value_1"...)
+
+Save data sets specified by "group_name", "value" in `file_name` at location specified by data entry `d` and corresponding values `v`.
+"""
+function save(d::DataEntry, v, file_name::String, groups...)
+    if occursin(".jld2", file_name)
+        save_jld2(d, v, file_name, groups...)
+    else
+        error("Unsupported file format.")
+    end
+end
+
+"""
+    load(d::DataEntry, v, file_name::String, "group_name_1", "value_1"...)
+
+load data sets specified by "group_name", "value" in `file_name` at location specified by data entry `d` and corresponding values `v`.
+"""
+function load(d::DataEntry, v, file_name::String, groups...)
+    if occursin(".jld2", file_name)
+        load_jld2(d, v, file_name, groups...)
+    else
+        error("Unsupported file format.")
+    end
+end
 end # end module

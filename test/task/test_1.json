@@ -2,16 +2,20 @@
   "root": "./data",
   "type": "save",
   "status": "running",
-  "folder_1": [
-    "alex",
-    "bob"
+  "folder": [
+    [
+      "alex",
+      "bob"
+    ],
+    [
+      "eve",
+      "sandy"
+    ]
   ],
-  "folder_2": [
-    "eve",
-    "sandy"
-  ],
-  "group_1": [
-    "anna"
+  "group": [
+    [
+      "anna"
+    ]
   ],
   "target_values": {
     "alex": 1.2,

@@ -1,13 +1,13 @@
 {
   "root": "./data",
   "type": "save",
-  "folder_1": [
+  "folder": [
     "alex",
     "bob",
     "eve",
     "sandy"
   ],
-  "group_1": [
+  "group": [
     "anna"
   ],
   "target_values": {
