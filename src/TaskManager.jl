@@ -1,7 +1,7 @@
 export load_config_from_json
 
 """
-    load_task_from_json(name)
+    load_config_from_json(name) -> DataEntry, Tasks
 
 Load task from task configuration file. Return a generator for all the `Task` defined in the "target_values" field of the configuration file.
 """

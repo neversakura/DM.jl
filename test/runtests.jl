@@ -8,8 +8,11 @@ using DM, Test
         test_data = range(0,stop=1,length=100)
         @info "Saving test data to file."
         save(d, v, "data.jld2", "x", test_data)
+        save(d, v, "data-1.jld2", "x", test_data)
+        save(d, v, "data-2.jld2", "x", test_data)
         @test isfile("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/data.jld2")
         @test check(d, v, "data.jld2", "x") == true
+        @test load_file_array(d, v, "data", "x") == [test_data, test_data]
         #set_value!(d, 0.5, "anna")
         #@test dm_check(d, "data.jld2", "x") == false
         d2, v2 = load_config_from_json("task/test_2.json")
@@ -17,6 +20,8 @@ using DM, Test
         @test test_x == test_data
         @info "Deleting saved data file."
         rm("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/data.jld2")
+        rm("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/data-1.jld2")
+        rm("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/data-2.jld2")
 end
 
 @testset "Iteration" begin

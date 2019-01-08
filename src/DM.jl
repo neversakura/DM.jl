@@ -4,7 +4,7 @@ import JSON
 include("DataEntry.jl")
 include("TaskManager.jl")
 export activate_param_set, get_param_set
-export save, load, check
+export save, load, check, load_file_array
 
 global _current_param_set
 
@@ -115,5 +115,22 @@ function load(d::DataEntry, v, file_name::String, groups...)
     else
         error("Unsupported file format.")
     end
+end
+
+function load_file_array(d::DataEntry, v, file_name::String, groups...)
+    r_str = Regex(file_name * "-(\\d+)\\.(.+)")
+    folder_path = get_folder_path(d, v)
+    f_list = readdir(folder_path)
+    group_path = get_group_path(d, v)
+    names = [group_path * i for i in groups]
+    res = []
+    for f in f_list
+        m = match(r_str, f)
+        if m!=nothing
+            f_path = joinpath(folder_path, m.match)
+            push!(res, load(f_path, names...))
+        end
+    end
+    res
 end
 end # end module
