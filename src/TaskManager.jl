@@ -13,7 +13,17 @@ function load_config_from_json(name)
         target_value_pair = ()
     end
     f(x)=typeof(x[1])==String ? [x] : x
-    DataEntry(t["root"], f(t["folder"]), f(t["group"])), create_task_list(target_value_pair...)
+    if haskey(t, "folder") && (t["folder"]!=nothing)
+        folder_path = f(t["folder"])
+    else
+        folder_path = ()
+    end
+    if haskey(t, "group") && (t["group"])
+        group_path = f(t["group"])
+    else
+        group_path = ()
+    end
+    DataEntry(t["root"], folder_path, group_path)), create_task_list(target_value_pair...)
 end
 
 """
