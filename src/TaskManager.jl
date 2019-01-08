@@ -7,7 +7,11 @@ Load task from task configuration file. Return a generator for all the `Task` de
 """
 function load_config_from_json(name)
     t = JSON.parsefile(name)
-    target_value_pair = parse_target_values(t["target_values"])
+    if haskey(t, "target_values")
+        target_value_pair = parse_target_values(t["target_values"])
+    else
+        target_value_pair = ()
+    end
     f(x)=typeof(x[1])==String ? [x] : x
     DataEntry(t["root"], f(t["folder"]), f(t["group"])), create_task_list(target_value_pair...)
 end
