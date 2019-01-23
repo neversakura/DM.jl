@@ -1,7 +1,9 @@
 using Format
 import FileIO.save, FileIO.load
+import CSV
 using JLD2
 export DataEntry
+@reexport using DataFrames
 
 """
 Locator for a single data entry, uniquely defined by parameter names partitioned into file system path and group path.
@@ -99,4 +101,17 @@ function load_jld2(d::DataEntry, v, file_name::String, groups...)
     group_path = get_group_path(d, v)
     names = [group_path * i for i in groups]
     load(file, names...)
+end
+
+function save_csv(d::DataEntry, v, file_name::String, data; kwargs...)
+    folder_path = get_folder_path(d, v)
+    mkpath(folder_path)
+    file = joinpath(folder_path,file_name)
+    CSV.write(file, data; kwargs...)
+end
+
+function load_csv(d::DataEntry, v, file_name::String; kwargs...)
+    folder_path = get_folder_path(d, v)
+    file = joinpath(folder_path,file_name)
+    CSV.File(file; kwargs...) |> DataFrame
 end

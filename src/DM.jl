@@ -1,6 +1,7 @@
 module DM
 
 import JSON
+using Reexport
 include("DataEntry.jl")
 include("TaskManager.jl")
 export activate_param_set, get_param_set
@@ -99,6 +100,8 @@ Save data sets specified by "group_name", "value" in `file_name` at location spe
 function save(d::DataEntry, v, file_name::String, groups...)
     if occursin(".jld2", file_name)
         save_jld2(d, v, file_name, groups...)
+    elseif occursin(".csv", file_name)
+        save_csv(d, v, file_name, groups...)
     else
         error("Unsupported file format.")
     end
@@ -112,6 +115,8 @@ load data sets specified by "group_name", "value" in `file_name` at location spe
 function load(d::DataEntry, v, file_name::String, groups...)
     if occursin(".jld2", file_name)
         load_jld2(d, v, file_name, groups...)
+    elseif occursin(".csv", file_name)
+        load_csv(d, v, file_name, groups...)
     else
         error("Unsupported file format.")
     end

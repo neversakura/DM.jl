@@ -45,3 +45,15 @@ end
         exp = Dict{String, String}("alex"=>"%.2f", "bob"=>"%.2f", "eve"=>"%.2f", "sandy"=>"%.2f", "anna"=>"%.2f")
         @test get_param_set() == exp
 end
+
+@testset "CSV file support" begin
+        activate_param_set("task/params.json")
+        d, v = load_config_from_json("task/test_1.json")
+        df = DataFrame(A = 1:4, B = ["M", "F", "F", "M"])
+        @info "Saving test CSV file."
+        save(d, v, "test.csv", df)
+        @test isfile("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/test.csv")
+        @test load(d, v, "test.csv") == df
+        @info "Deleting saved data file."
+        rm("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/test.csv")
+end
