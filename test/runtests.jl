@@ -54,6 +54,9 @@ end
         save(d, v, "test.csv", df)
         @test isfile("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/test.csv")
         @test load(d, v, "test.csv") == df
+        if Sys.iswindows()
+            GC.gc()
+        end
         @info "Deleting saved data file."
         rm("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/test.csv")
 end
