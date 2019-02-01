@@ -37,11 +37,9 @@ end
 
 function print_params(format_dict,value_dict,key::Array{Array{String,1},1})
     res = ""
-    if !isempty(key[1])
-        for i in key
-            param_str = print_params(format_dict, value_dict, i)
-            res = res * param_str * "/"
-        end
+    for i in key
+        param_str = print_params(format_dict, value_dict, i)
+        res = res * param_str * "/"
     end
     res
 end
