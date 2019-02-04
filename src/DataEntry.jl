@@ -29,8 +29,10 @@ Print out the path of parameter set given by `key`. `format_dict` and `value_dic
 function print_params(format_dict,value_dict,key::Array{String,1})
     res = ""
     for name in key
-        data_string = cfmt(format_dict[name], value_dict[name])
-        res = res*name*"="*data_string*"_"
+        if haskey(value_dict, name)
+            data_string = cfmt(format_dict[name], value_dict[name])
+            res = res*name*"="*data_string*"_"
+        end
     end
     res[1:end-1]
 end
