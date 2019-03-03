@@ -35,7 +35,11 @@ function print_params(format_dict,value_dict,key::Array{String,1})
             res = res*name*"="*data_string*"_"
         end
     end
-    res[1:end-1]
+    try
+        chop(res, tail=1)
+    catch
+        ""
+    end
 end
 
 function print_params(format_dict,value_dict,key::Array{Array{String,1},1})
@@ -44,7 +48,11 @@ function print_params(format_dict,value_dict,key::Array{Array{String,1},1})
         param_str = print_params(format_dict, value_dict, i)
         res = res * param_str * "/"
     end
-    res
+    try
+        chop(res, tail=1)
+    catch
+        ""
+    end
 end
 
 """
@@ -89,7 +97,7 @@ function save_jld2(d::DataEntry, v, file_name::String, groups...)
     jldopen(file, "a+") do f
         for (n, v)  in Iterators.partition(groups, 2)
             try
-                f[group_path * n] = v
+                f[group_path*"/"*n] = v
             catch
                 @warn "Data name: $(n) already exists. Data not saved."
             end
@@ -102,7 +110,7 @@ function load_jld2(d::DataEntry, v, file_name::String, groups...)
     folder_path = get_folder_path(d, v)
     file = joinpath(folder_path,file_name)
     group_path = get_group_path(d, v)
-    names = [group_path * i for i in groups]
+    names = [group_path*"/"*i for i in groups]
     load(file, names...)
 end
 
@@ -126,8 +134,8 @@ function save_hdf(d::DataEntry, v, file_name::String, groups...)
     file = joinpath(folder_path,file_name)
     h5open(file, "cw") do f
         for (n, v)  in Iterators.partition(groups, 2)
-            if !exists(f, group_path*n)
-                write(f, group_path*n, v)
+            if !exists(f, group_path*"/"*n)
+                write(f, group_path*"/"*n, v)
             else
                 @warn "Data name: $(n) already exists. Data not saved."
             end
@@ -139,7 +147,7 @@ function load_hdf(d::DataEntry, v, file_name::String, groups...)
     folder_path = get_folder_path(d, v)
     file = joinpath(folder_path,file_name)
     group_path = get_group_path(d, v)
-    names = [group_path * i for i in groups]
+    names = [group_path*"/"*i for i in groups]
     h5open(file, "r") do f
         if length(names) == 1
             res = read(f, names[1])
@@ -154,7 +162,7 @@ function delete_hdf(d::DataEntry, v, file_name::String, groups...)
     folder_path = get_folder_path(d, v)
     file = joinpath(folder_path,file_name)
     group_path = get_group_path(d, v)
-    names = [group_path * i for i in groups]
+    names = [group_path*"/"*i for i in groups]
     h5open(file, "r+") do f
         for n in names
             if exists(f, n)

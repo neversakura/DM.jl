@@ -60,23 +60,13 @@ function check(d::DataEntry, v, file_name::String, group_name::String)
         return false
     end
     if occursin(".jld2", file_name)
-        group = group_path * group_name
-        sub_groups = split(group,"/")
-        res = true
-        f = jldopen(file, "r")
-        g = f
-        for s in sub_groups
-            if haskey(g, s)
-                g = g[s]
-            else
-                res = false
-                break
-            end
+        group = group_path * "/" * group_name
+        res = jldopen(file, "r") do f
+            haskey(f, group)
         end
-        close(f)
         res
     elseif occursin(".h5", file_name)
-        group = group_path * group_name
+        group = group_path * "/" * group_name
         res = h5open(file, "r") do f
             exists(f, group)
         end
@@ -92,7 +82,6 @@ Check whether `file_name` exists at data entry `d`.
 """
 function check(d::DataEntry, v, file_name::String)
     folder_path = get_folder_path(d, v)
-    group_path = get_group_path(d, v)
     file = joinpath(folder_path,file_name)
     isfile(file)
 end
@@ -136,7 +125,7 @@ function load_file_array(d::DataEntry, v, file_name::String, groups...)
     folder_path = get_folder_path(d, v)
     f_list = readdir(folder_path)
     group_path = get_group_path(d, v)
-    names = [group_path * i for i in groups]
+    names = [group_path *"/"*i for i in groups]
     res = []
     for f in f_list
         m = match(r_str, f)
