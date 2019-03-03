@@ -5,7 +5,7 @@ using Reexport
 include("DataEntry.jl")
 include("TaskManager.jl")
 export activate_param_set, get_param_set
-export save, load, check, load_file_array
+export save, load, check, load_file_array, delete
 
 global _current_param_set
 
@@ -75,6 +75,11 @@ function check(d::DataEntry, v, file_name::String, group_name::String)
         end
         close(f)
         res
+    elseif occursin(".h5", file_name)
+        group = group_path * group_name
+        res = h5open(file, "r") do f
+            exists(f, group)
+        end
     else
         error("Unsupported file format.")
     end
@@ -102,6 +107,8 @@ function save(d::DataEntry, v, file_name::String, groups...)
         save_jld2(d, v, file_name, groups...)
     elseif occursin(".csv", file_name)
         save_csv(d, v, file_name, groups...)
+    elseif occursin(".h5", file_name)
+        save_hdf(d, v, file_name, groups...)
     else
         error("Unsupported file format.")
     end
@@ -117,6 +124,8 @@ function load(d::DataEntry, v, file_name::String, groups...)
         load_jld2(d, v, file_name, groups...)
     elseif occursin(".csv", file_name)
         load_csv(d, v, file_name, groups...)
+    elseif occursin(".h5", file_name)
+        load_hdf(d, v, file_name, groups...)
     else
         error("Unsupported file format.")
     end
@@ -138,4 +147,13 @@ function load_file_array(d::DataEntry, v, file_name::String, groups...)
     end
     res
 end
+
+function delete(d::DataEntry, v, file_name::String, groups...)
+    if occursin(".h5", file_name)
+        delete_hdf(d, v, file_name, groups...)
+    else
+        @warn "Unsupported file format for delete operation"
+    end
+end
+
 end # end module
