@@ -89,7 +89,7 @@ end
 """
     save(d::DataEntry, v, file_name::String, "group_name_1", "value_1"...)
 
-Save data sets specified by "group_name", "value" in `file_name` at location specified by data entry `d` and corresponding values `v`.
+Save data sets (`value_1`, `value_2` ...) in corresponding groups (`group_name_1`, `group_name_2`...) in file (`file_name`), whose location is specified by data entry `d` and corresponding values `v`.
 """
 function save(d::DataEntry, v, file_name::String, groups...)
     if occursin(".jld2", file_name)
@@ -104,9 +104,9 @@ function save(d::DataEntry, v, file_name::String, groups...)
 end
 
 """
-    load(d::DataEntry, v, file_name::String, "group_name_1", "value_1"...)
+    load(d::DataEntry, v, file_name::String, "group_name_1"...)
 
-load data sets specified by "group_name", "value" in `file_name` at location specified by data entry `d` and corresponding values `v`.
+Save data sets from groups (`group_name_1`, `group_name_2`...) in file (`file_name`), whose location is specified by data entry `d` and corresponding values `v`.
 """
 function load(d::DataEntry, v, file_name::String, groups...)
     if occursin(".jld2", file_name)
