@@ -93,7 +93,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Home",
     "title": "FileIO.load",
     "category": "method",
-    "text": "load(d::DataEntry, v, file_name::String, \"group_name_1\", \"value_1\"...)\n\nload data sets specified by \"groupname\", \"value\" in `filenameat location specified by data entrydand corresponding valuesv`.\n\n\n\n\n\n"
+    "text": "load(d::DataEntry, v, file_name::String, \"group_name_1\"...)\n\nSave data sets from groups (group_name_1, group_name_2...) in file (file_name), whose location is specified by data entry d and corresponding values v.\n\n\n\n\n\n"
 },
 
 {
@@ -101,7 +101,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Home",
     "title": "FileIO.save",
     "category": "method",
-    "text": "save(d::DataEntry, v, file_name::String, \"group_name_1\", \"value_1\"...)\n\nSave data sets specified by \"groupname\", \"value\" in `filenameat location specified by data entrydand corresponding valuesv`.\n\n\n\n\n\n"
+    "text": "save(d::DataEntry, v, file_name::String, \"group_name_1\", \"value_1\"...)\n\nSave data sets (value_1, value_2 ...) in corresponding groups (group_name_1, group_name_2...) in file (file_name), whose location is specified by data entry d and corresponding values v.\n\n\n\n\n\n"
 },
 
 {
