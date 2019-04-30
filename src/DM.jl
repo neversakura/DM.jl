@@ -62,7 +62,11 @@ function check(d::DataEntry, v, file_name::String, group_name::String)
     if occursin(".jld2", file_name)
         group = group_path * "/" * group_name
         res = jldopen(file, "r") do f
-            haskey(f, group)
+            try
+                haskey(f, group)
+            catch
+                false
+            end
         end
         res
     elseif occursin(".h5", file_name)
