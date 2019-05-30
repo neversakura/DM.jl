@@ -12,6 +12,9 @@ include("params.jl")
 include("DataEntry.jl")
 include("TaskManager.jl")
 include("hdf5_util.jl")
+include("jld2_util.jl")
+include("csv_util.jl")
+
 
 
 export DataEntry
