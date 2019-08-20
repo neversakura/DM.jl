@@ -1,5 +1,3 @@
-export load_config_from_json
-
 """
     load_config_from_json(name) -> DataEntry, Tasks
 

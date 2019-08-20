@@ -9,14 +9,14 @@ import JSON
 using Reexport
 
 include("params.jl")
-include("DataEntry.jl")
-include("TaskManager.jl")
+include("data_entry.jl")
+include("load_json.jl")
 include("hdf5_util.jl")
 include("jld2_util.jl")
 include("csv_util.jl")
 
 
-
+export load_config_from_json
 export DataEntry
 export activate_param_set, get_param_set
 export save, load, check, load_file_array, delete
