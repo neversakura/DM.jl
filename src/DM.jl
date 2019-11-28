@@ -21,7 +21,7 @@ export DataEntry
 export activate_param_set, get_param_set
 export save, load, check, load_file_array, delete
 
-@reexport using DataFrames
+@reexport using CSVFiles, DataFrames
 
 """
     check(d::DataEntry, v, file_name::String, group_name::String)

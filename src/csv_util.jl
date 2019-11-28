@@ -16,3 +16,8 @@ function load_csv(d::DataEntry, v, file_name::String; kwargs...)
     file = joinpath(folder_path,file_name)
     CSV.File(file; kwargs...) |> DataFrame
 end
+
+function load_csv(file_name::String; kwargs...)
+    @show file_name
+    CSV.File(file; kwargs...) |> DataFrame
+end
