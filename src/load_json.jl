@@ -16,7 +16,7 @@ function load_config_from_json(name)
     else
         folder_path = ()
     end
-    if haskey(t, "group") && (t["group"]!=nothing)
+    if haskey(t, "group") && (t["group"]!=nothing) && (!isempty(t["group"]))
         group_path = f(t["group"])
     else
         group_path = ()
