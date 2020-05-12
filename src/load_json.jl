@@ -11,7 +11,7 @@ function load_config_from_json(name)
         target_value_pair = ()
     end
     f(x)=typeof(x[1])==String ? [x] : x
-    if haskey(t, "folder") && (t["folder"]!=nothing)
+    if haskey(t, "folder") && (t["folder"]!=nothing) && (!isempty(t["folder"]))
         folder_path = f(t["folder"])
     else
         folder_path = ()

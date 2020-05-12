@@ -31,7 +31,7 @@ Check whether a data group named `group_name` exists in a file named `file_name`
 function check(d::DataEntry, v, file_name::String, group_name::String)
     folder_path = get_folder_path(d, v)
     group_path = get_group_path(d, v)
-    file = joinpath(folder_path,file_name)
+    file = joinpath(folder_path, file_name)
     if !isfile(file)
         return false
     end
@@ -62,7 +62,7 @@ Check whether `file_name` exists at data entry `d`.
 """
 function check(d::DataEntry, v, file_name::String)
     folder_path = get_folder_path(d, v)
-    file = joinpath(folder_path,file_name)
+    file = joinpath(folder_path, file_name)
     isfile(file)
 end
 
@@ -117,11 +117,11 @@ function load_file_array(d::DataEntry, v, file_name::String, groups...)
     folder_path = get_folder_path(d, v)
     f_list = readdir(folder_path)
     group_path = get_group_path(d, v)
-    names = [group_path *"/"*i for i in groups]
+    names = [group_path * "/" * i for i in groups]
     res = []
     for f in f_list
         m = match(r_str, f)
-        if m!=nothing
+        if m != nothing
             f_path = joinpath(folder_path, m.match)
             push!(res, load(f_path, names...))
         end
