@@ -16,7 +16,7 @@ include("jld2_util.jl")
 include("csv_util.jl")
 
 
-export load_config_from_json
+export load_config_from_json, partition
 export DataEntry
 export activate_param_set, get_param_set
 export save, load, check, load_file_array, delete

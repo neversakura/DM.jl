@@ -60,15 +60,18 @@ Create a task list generator from `name` - `value` pairs. `value` can be an iter
 ```julia-repl
 julia> collect(create_task_list("a"=>1, "b"=>range(0,stop=2)))
 3-element Array{Tuple{Pair{String,Int64},Pair{String,Int64}},1}:
- ("a" => 1, "b" => 0)
- ("a" => 1, "b" => 1)
- ("a" => 1, "b" => 2)
+ (:a => 1, :b => 0)
+ (:a => 1, :b => 1)
+ (:a => 1, :b => 2)
 ```
 """
 function create_task_list(args...)
     res = []
     for item in args
-        push!(res, (item.first=>x for x in item.second))
+        push!(res, (Symbol(item.first)=>x for x in item.second))
     end
     Iterators.product(res...)
 end
+
+
+partition(v, num) = collect(Iterators.partition(v, num))

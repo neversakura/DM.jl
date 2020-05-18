@@ -19,29 +19,34 @@ end
 
 Print out the path of parameter set given by `key`. `format_dict` and `value_dict` are look-up tables for  parameter formatters and values respectively. `key` should be an valid partition of parameter names.
 """
-function print_params(format_dict,value_dict,key::Array{String,1})
+function print_params(format_dict, value_dict, key::Array{String,1})
     res = ""
     for name in key
         if haskey(value_dict, name)
-            data_string = cfmt(format_dict[name], value_dict[name])
-            res = res*name*"="*data_string*"_"
+            value = value_dict[name]
+        elseif haskey(value_dict, Symbol(name))
+            value = value_dict[Symbol(name)]
+        else
+            throw(KeyError(name))
         end
+        data_string = cfmt(format_dict[name], value)
+        res = res * name * "=" * data_string * "_"
     end
     try
-        chop(res, tail=1)
+        chop(res, tail = 1)
     catch
         ""
     end
 end
 
-function print_params(format_dict,value_dict,key::Array{Array{String,1},1})
+function print_params(format_dict, value_dict, key::Array{Array{String,1},1})
     res = ""
     for i in key
         param_str = print_params(format_dict, value_dict, i)
         res = res * param_str * "/"
     end
     try
-        chop(res, tail=1)
+        chop(res, tail = 1)
     catch
         ""
     end

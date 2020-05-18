@@ -1,7 +1,5 @@
 {
   "root": "./data",
-  "type": "save",
-  "status": "running",
   "folder": [
     [
       "alex",
@@ -23,6 +21,5 @@
     "eve": "8*pi",
     "sandy": 0.21,
     "anna": "1/2.23"
-  },
-  "finished_values": null
+  }
 }

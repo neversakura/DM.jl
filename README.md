@@ -1,6 +1,5 @@
 # DM
 
-[![](https://img.shields.io/badge/docs-stable-blue.svg)](https://neversakura.github.io/DM.jl/stable)
-[![](https://img.shields.io/badge/docs-dev-blue.svg)](https://neversakura.github.io/DM.jl/dev)
+[![](https://img.shields.io/badge/docs-latest-blue.svg)](https://neversakura.github.io/DM.jl/dev)
 
-Data management module for scientific computing based on [JLD2](https://github.com/simonster/JLD2.jl).
+Data management module for scientific computing based on [JLD2](https://github.com/simonster/JLD2.jl), [HDF5](https://github.com/JuliaIO/HDF5.jl) and [CVS](https://github.com/JuliaData/CSV.jl).

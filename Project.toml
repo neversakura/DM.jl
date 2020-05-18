@@ -1,14 +1,12 @@
 name = "DM"
 uuid = "a4c9a0b6-a80f-11e8-2852-5b4a901f9fec"
 authors = ["Sandy <neversakura@hotmail.com>"]
-version = "0.2.0"
+version = "0.5.0"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 CSVFiles = "5d742f6a-9f54-50ce-8119-2520741973ca"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
-Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
-DocumenterTools = "35a29f4d-8980-5a13-9543-d66fff28ecb8"
 FileIO = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
 Format = "1fa38f19-a742-5d3f-a2b9-30dd87b9d5f8"
 HDF5 = "f67ccb44-e63f-5c2f-98bd-6dc0ccc4ba2f"
@@ -17,6 +15,7 @@ JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 
 [extras]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 SafeTestsets = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 

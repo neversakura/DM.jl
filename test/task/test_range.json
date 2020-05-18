@@ -1,5 +1,5 @@
 {
-  "finished_values": null,
+  "root": "./data",
   "folder": [
     [
       "alex",
@@ -13,8 +13,6 @@
   "group": [
     "anna"
   ],
-  "root": "./data",
-  "status": "running",
   "target_values": {
     "alex": 1.2,
     "anna": [
@@ -25,6 +23,6 @@
     "bob": 4,
     "eve": "8*pi",
     "sandy": 0.21
-  },
-  "type": "save"
+  }
+  
 }

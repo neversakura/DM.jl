@@ -1,6 +1,5 @@
 {
   "root": "./data",
-  "type": "save",
   "folder": [
     "alex",
     "bob",
@@ -16,6 +15,5 @@
     "eve": "8*pi",
     "sandy": 0.21,
     "anna": "1/2.23"
-  },
-  "finished_values": null
+  }
 }
