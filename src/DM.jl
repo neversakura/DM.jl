@@ -10,6 +10,7 @@ using Reexport
 
 include("params.jl")
 include("data_entry.jl")
+include("utilities.jl")
 include("load_json.jl")
 include("hdf5_util.jl")
 include("jld2_util.jl")
@@ -23,94 +24,58 @@ export save, load, check, load_file_array, delete
 
 @reexport using CSVFiles, DataFrames
 
-"""
-    check(d::DataEntry, v, file_name::String, group_name::String)
 
-Check whether a data group named `group_name` exists in a file named `file_name` at data entry `d`.
-"""
-function check(d::DataEntry, v, file_name::String, group_name::String)
-    folder_path = get_folder_path(d, v)
-    group_path = get_group_path(d, v)
-    file = joinpath(folder_path, file_name)
-    if !isfile(file)
-        return false
-    end
-    if occursin(".jld2", file_name)
-        group = group_path * "/" * group_name
-        res = jldopen(file, "r") do f
-            try
-                haskey(f, group)
-            catch
-                false
-            end
+for op in (:check, :save, :load, :delete)
+    eval(quote
+        function $op(d::DataEntry, v, file_name::String, groups...)
+            file_path, group_path = _get_file_group_path(d, v, file_name)
+            $op(file_path, group_path, groups...)
         end
-        res
-    elseif occursin(".h5", file_name)
-        group = group_path * "/" * group_name
-        res = h5open(file, "r") do f
-            exists(f, group)
-        end
+    end)
+end
+
+
+function check(
+    file_path::AbstractString,
+    group_path::AbstractString,
+    groups...,
+)
+    if isfile(file_path)
+        ext = _get_extension(file_path)
+        f = _get_function("check_", ext)
+        all([f(file_path, group_path, group_name) for group_name in groups])
     else
-        error("Unsupported file format.")
+        false
     end
 end
 
-"""
-    check(d::DataEntry, v, file_name::String)
 
-Check whether `file_name` exists at data entry `d`.
-"""
-function check(d::DataEntry, v, file_name::String)
-    folder_path = get_folder_path(d, v)
-    file = joinpath(folder_path, file_name)
-    isfile(file)
+function save(file_path::AbstractString, group_path::AbstractString, groups...)
+    ext = _get_extension(file_path)
+    f = _get_function("save_", ext)
+    f(file_path, group_path, groups...)
 end
 
-"""
-    save(d::DataEntry, v, file_name::String, "group_name_1", "value_1"...)
 
-Save data sets (`value_1`, `value_2` ...) in corresponding groups (`group_name_1`, `group_name_2`...) in file (`file_name`), whose location is specified by data entry `d` and corresponding values `v`.
-"""
-function save(d::DataEntry, v, file_name::String, groups...)
-    if occursin(".jld2", file_name)
-        save_jld2(d, v, file_name, groups...)
-    elseif occursin(".csv", file_name)
-        save_csv(d, v, file_name, groups...)
-    elseif occursin(".h5", file_name)
-        save_hdf(d, v, file_name, groups...)
-    else
-        error("Unsupported file format.")
-    end
+function load(file_path::AbstractString, group_path::AbstractString, groups...)
+    _check_file(file_path)
+    ext = _get_extension(file_path)
+    f = _get_function("load_", ext)
+    f(file_path, group_path, groups...)
 end
 
-function save(file_name::String, groups...)
-    if occursin(".jld2", file_name)
-        save_jld2(file_name, groups...)
-    elseif occursin(".csv", file_name)
-        save_csv(file_name, groups...)
-    elseif occursin(".h5", file_name)
-        save_hdf(file_name, groups...)
-    else
-        error("Unsupported file format.")
-    end
+
+function delete(
+    file_path::AbstractString,
+    group_path::AbstractString,
+    groups...,
+)
+    _check_file(file_path)
+    ext = _get_extension(file_path)
+    f = _get_function("delete_", ext)
+    f(file_path, group_path, groups...)
 end
 
-"""
-    load(d::DataEntry, v, file_name::String, "group_name_1"...)
-
-Save data sets from groups (`group_name_1`, `group_name_2`...) in file (`file_name`), whose location is specified by data entry `d` and corresponding values `v`.
-"""
-function load(d::DataEntry, v, file_name::String, groups...)
-    if occursin(".jld2", file_name)
-        load_jld2(d, v, file_name, groups...)
-    elseif occursin(".csv", file_name)
-        load_csv(d, v, file_name, groups...)
-    elseif occursin(".h5", file_name)
-        load_hdf(d, v, file_name, groups...)
-    else
-        error("Unsupported file format.")
-    end
-end
 
 function load_file_array(d::DataEntry, v, file_name::String, groups...)
     r_str = Regex(file_name * "-(\\d+)\\.(.+)")
@@ -127,14 +92,6 @@ function load_file_array(d::DataEntry, v, file_name::String, groups...)
         end
     end
     res
-end
-
-function delete(d::DataEntry, v, file_name::String, groups...)
-    if occursin(".h5", file_name)
-        delete_hdf(d, v, file_name, groups...)
-    else
-        @warn "Unsupported file format for delete operation"
-    end
 end
 
 end # end module
