@@ -43,5 +43,5 @@ function load_jld2(d::DataEntry, v, file_name::String, groups...)
     file = joinpath(folder_path,file_name)
     group_path = get_group_path(d, v)
     names = [group_path*"/"*i for i in groups]
-    load(file, names...)
+    FileIO.load(file, names...)
 end

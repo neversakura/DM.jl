@@ -18,6 +18,5 @@ function load_csv(d::DataEntry, v, file_name::String; kwargs...)
 end
 
 function load_csv(file_name::String; kwargs...)
-    @show file_name
     CSV.File(file; kwargs...) |> DataFrame
 end

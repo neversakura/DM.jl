@@ -1,7 +1,7 @@
 module DM
 
 using Format
-import FileIO.save, FileIO.load
+using FileIO
 import CSV
 using JLD2
 using HDF5
@@ -123,7 +123,7 @@ function load_file_array(d::DataEntry, v, file_name::String, groups...)
         m = match(r_str, f)
         if m != nothing
             f_path = joinpath(folder_path, m.match)
-            push!(res, load(f_path, names...))
+            push!(res, FileIO.load(f_path, names...))
         end
     end
     res
