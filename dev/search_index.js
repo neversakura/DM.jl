@@ -57,22 +57,6 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "#DM.check-Tuple{DataEntry,Any,String,String}",
-    "page": "Home",
-    "title": "DM.check",
-    "category": "method",
-    "text": "check(d::DataEntry, v, file_name::String, group_name::String)\n\nCheck whether a data group named group_name exists in a file named file_name at data entry d.\n\n\n\n\n\n"
-},
-
-{
-    "location": "#DM.check-Tuple{DataEntry,Any,String}",
-    "page": "Home",
-    "title": "DM.check",
-    "category": "method",
-    "text": "check(d::DataEntry, v, file_name::String)\n\nCheck whether file_name exists at data entry d.\n\n\n\n\n\n"
-},
-
-{
     "location": "#DM.get_param_set-Tuple{}",
     "page": "Home",
     "title": "DM.get_param_set",
@@ -86,22 +70,6 @@ var documenterSearchIndex = {"docs": [
     "title": "DM.load_config_from_json",
     "category": "method",
     "text": "load_config_from_json(name) -> DataEntry, Tasks\n\nLoad task from task configuration file. Return a generator for all the Task defined in the \"target_values\" field of the configuration file.\n\n\n\n\n\n"
-},
-
-{
-    "location": "#FileIO.load-Tuple{DataEntry,Any,String,Vararg{Any,N} where N}",
-    "page": "Home",
-    "title": "FileIO.load",
-    "category": "method",
-    "text": "load(d::DataEntry, v, file_name::String, \"group_name_1\"...)\n\nSave data sets from groups (group_name_1, group_name_2...) in file (file_name), whose location is specified by data entry d and corresponding values v.\n\n\n\n\n\n"
-},
-
-{
-    "location": "#FileIO.save-Tuple{DataEntry,Any,String,Vararg{Any,N} where N}",
-    "page": "Home",
-    "title": "FileIO.save",
-    "category": "method",
-    "text": "save(d::DataEntry, v, file_name::String, \"group_name_1\", \"value_1\"...)\n\nSave data sets (value_1, value_2 ...) in corresponding groups (group_name_1, group_name_2...) in file (file_name), whose location is specified by data entry d and corresponding values v.\n\n\n\n\n\n"
 },
 
 {
