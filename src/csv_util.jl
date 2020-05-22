@@ -1,23 +1,16 @@
-function save_csv(d::DataEntry, v, file_name::String, data; kwargs...)
-    folder_path = get_folder_path(d, v)
-    mkpath(folder_path)
-    file = joinpath(folder_path,file_name)
-    CSV.write(file, data; kwargs...)
-end
-
-function save_csv(file_path::String, data; kwargs...)
+function save_csv(file_path::String, group_path, data; kwargs...)
+    if group_path != ""
+        @warn "Group path ignored when saving to .csv file."
+    end
     path, file = splitdir(file_path)
     mkpath(path)
     CSV.write(file_path, data; kwargs...)
 end
 
-function load_csv(d::DataEntry, v, file_name::String; kwargs...)
-    folder_path = get_folder_path(d, v)
-    file = joinpath(folder_path,file_name)
-    CSV.File(file; kwargs...) |> DataFrame
-end
 
-function load_csv(file_name::String; kwargs...)
-    @show file_name
-    CSV.File(file; kwargs...) |> DataFrame
+function load_csv(file_path::String, group_path; kwargs...)
+    if group_path != ""
+        @warn "Group path ignored when loading .csv file."
+    end
+    CSV.File(file_path; kwargs...) |> DataFrame
 end
