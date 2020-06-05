@@ -82,13 +82,13 @@ function load_file_array(d::DataEntry, v, file_name::String, groups...)
     folder_path = get_folder_path(d, v)
     f_list = readdir(folder_path)
     group_path = get_group_path(d, v)
-    names = [group_path * "/" * i for i in groups]
+    #names = [group_path * "/" * i for i in groups]
     res = []
     for f in f_list
         m = match(r_str, f)
         if m != nothing
             f_path = joinpath(folder_path, m.match)
-            push!(res, FileIO.load(f_path, names...))
+            push!(res, load(f_path, group_path, groups...))
         end
     end
     res
