@@ -1,11 +1,11 @@
-function save_jld2(
+function save_jld(
     file_path::AbstractString,
     group_path::AbstractString,
     groups...,
 )
     path, file = splitdir(file_path)
     mkpath(path)
-    jldopen(file_path, "a+") do f
+    jldopen(file_path, "w") do f
         for (n, v) in Iterators.partition(groups, 2)
             try
                 f[group_path*"/"*n] = v
@@ -17,7 +17,7 @@ function save_jld2(
 end
 
 
-function load_jld2(
+function load_jld(
     file_path::AbstractString,
     group_path::AbstractString,
     groups...,
@@ -27,17 +27,13 @@ function load_jld2(
 end
 
 
-function check_jld2(
+function check_jld(
     file_path::AbstractString,
     group_path::AbstractString,
     group_name,
 )
     group = group_path * "/" * group_name
     res = jldopen(file_path, "r") do f
-        try
-            haskey(f, group)
-        catch
-            false
-        end
+        exists(f, group)
     end
 end

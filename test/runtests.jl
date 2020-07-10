@@ -7,28 +7,28 @@ using DM, Test
               joinpath("./data", "alex=1.20_bob=4.00/eve=25.13_sandy=0.21")
         @test DM.get_group_path(d, v) == "anna=0.45"
         test_data = range(0, stop = 1, length = 100)
-        @info "Saving test jld2 file."
-        save(d, v, "data.jld2", "x", test_data)
-        save(d, v, "data-1.jld2", "x", test_data)
-        save(d, v, "data-2.jld2", "x", test_data)
-        @test isfile("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/data.jld2")
-        @test check(d, v, "data.jld2", "x") == true
+        @info "Saving test jld file."
+        save(d, v, "data.jld", "x", test_data)
+        save(d, v, "data-1.jld", "x", test_data)
+        save(d, v, "data-2.jld", "x", test_data)
+        @test isfile("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/data.jld")
+        @test check(d, v, "data.jld", "x") == true
         @test load_file_array(d, v, "data", "x") == [test_data, test_data]
         #set_value!(d, 0.5, "anna")
-        #@test dm_check(d, "data.jld2", "x") == false
+        #@test dm_check(d, "data.jld", "x") == false
         d2, v2 = load_config_from_json("task/test_2.json")
-        test_x = load(d, v2, "data.jld2", "x")
+        test_x = load(d, v2, "data.jld", "x")
         @test test_x == test_data
 
         test_entry = DataEntry("./data", [[]], [[]])
-        save(test_entry, Dict(), "test.jld2", "x", test_data)
-        @test isfile("./data/test.jld2")
+        save(test_entry, Dict(), "test.jld", "x", test_data)
+        @test isfile("./data/test.jld")
 
-        @info "Deleting saved jld2 file."
-        rm("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/data.jld2")
-        rm("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/data-1.jld2")
-        rm("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/data-2.jld2")
-        rm("./data/test.jld2")
+        @info "Deleting saved jld file."
+        rm("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/data.jld")
+        rm("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/data-1.jld")
+        rm("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/data-2.jld")
+        rm("./data/test.jld")
 end
 
 @testset "Iteration" begin

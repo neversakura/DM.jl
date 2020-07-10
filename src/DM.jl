@@ -2,8 +2,9 @@ module DM
 
 using Format
 using FileIO
+using DocStringExtensions
 import CSV
-using JLD2
+using JLD
 using HDF5
 import JSON
 using Reexport
@@ -13,7 +14,7 @@ include("data_entry.jl")
 include("utilities.jl")
 include("load_json.jl")
 include("hdf5_util.jl")
-include("jld2_util.jl")
+include("jld_util.jl")
 include("csv_util.jl")
 
 
@@ -49,7 +50,11 @@ function check(
     end
 end
 
+"""
+$(SIGNATURES)
 
+Save data in `groups` in to file `file_path`.
+"""
 function save(file_path::AbstractString, group_path::AbstractString, groups...)
     ext = _get_extension(file_path)
     f = _get_function("save_", ext)
