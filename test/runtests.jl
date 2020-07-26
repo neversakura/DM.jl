@@ -81,10 +81,12 @@ end
         @info "Saving test hdf5 file."
         save(d, v, "data.h5", "x", test_data)
         save(d, v, "data.h5", "y", [1, 2, 3], "z", "hello")
+        writeattr(d, v, "data.h5", "test_attr", "test_val")
         @test isfile("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/data.h5")
         @test check(d, v, "data.h5", "x") == true
         test_x = load(d, v, "data.h5", "x")
         @test test_x == test_data
+        @test readattr(d, v, "data.h5", "test_attr") == "test_val"
         delete(d, v, "data.h5", "y", "z")
         @test !check(d, v, "data.h5", "y")
         @info "Deleting saved hdf5 file."

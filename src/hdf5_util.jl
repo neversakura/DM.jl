@@ -60,3 +60,60 @@ function check_h5(
         exists(f, group)
     end
 end
+
+
+function writeattr_h5(
+    file_path::AbstractString,
+    group_path::AbstractString,
+    attr_name::String,
+    attr_value,
+)
+    path, file = splitdir(file_path)
+    mkpath(path)
+    group_path = convert(String, group_path)
+    h5open(file_path, "cw") do f
+        attrs(f[group_path])[attr_name] = attr_value
+    end
+end
+
+function writeattr_h5(
+    file_path::AbstractString,
+    group_path::AbstractString,
+    dataset::String,
+    attr_name::String,
+    attr_value,
+)
+    path, file = splitdir(file_path)
+    mkpath(path)
+    group_path = convert(String, group_path)
+    h5open(file_path, "cw") do f
+        attrs(f[group_path][dataset])[attr_name] = attr_value
+    end
+end
+
+function readattr_h5(
+    file_path::AbstractString,
+    group_path::AbstractString,
+    attr_name::String,
+)
+    path, file = splitdir(file_path)
+    mkpath(path)
+    group_path = convert(String, group_path)
+    h5open(file_path, "r") do f
+        read(attrs(f[group_path])[attr_name])
+    end
+end
+
+function readattr_h5(
+    file_path::AbstractString,
+    group_path::AbstractString,
+    dataset::String,
+    attr_name::String,
+)
+    path, file = splitdir(file_path)
+    mkpath(path)
+    group_path = convert(String, group_path)
+    h5open(file_path, "r") do f
+        read(attrs(f[group_path][dataset])[attr_name])
+    end
+end
