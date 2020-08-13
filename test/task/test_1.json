@@ -1,21 +1,36 @@
 {
   "root": "./data",
-  "folder": [
-    [
-      "alex",
-      "bob"
-    ],
-    [
-      "eve",
-      "sandy"
-    ]
-  ],
-  "group": [
-    [
-      "anna"
-    ]
-  ],
-  "target_values": {
+  "tasks": {
+    "task1":{
+      "folder": [
+        [
+          "alex",
+          "bob"
+        ],
+        [
+          "eve",
+          "sandy"
+        ]
+      ],
+      "group": [
+        [
+          "anna"
+        ]
+      ]
+    },
+    "task2" :{
+      "folder": [
+        "alex",
+        "bob",
+        "eve",
+        "sandy"
+      ],
+      "group": [
+        "anna"
+      ]
+    }
+  },
+  "default_values": {
     "alex": 1.2,
     "bob": 4,
     "eve": "8*pi",

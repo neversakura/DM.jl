@@ -3,23 +3,23 @@ using DM, Test
 @testset "DataEntry" begin
         activate_param_set("task/params.json")
         d, v = load_config_from_json("task/test_1.json")
-        @test DM.get_folder_path(d, v) ==
+        d1 = d["task1"]
+        d2 = d["task2"]
+        @test DM.get_folder_path(d1, v) ==
               joinpath("./data", "alex=1.20_bob=4.00/eve=25.13_sandy=0.21")
-        @test DM.get_group_path(d, v) == "anna=0.45"
+        @test DM.get_group_path(d1, v) == "anna=0.45"
         test_data = range(0, stop = 1, length = 100)
         @info "Saving test jld file."
-        save(d, v, "data.jld", "x", test_data)
-        save(d, v, "data-1.jld", "x", test_data)
-        save(d, v, "data-2.jld", "x", test_data)
+        save(d1, v, "data.jld", "x", test_data)
+        save(d1, v, "data-1.jld", "x", test_data)
+        save(d1, v, "data-2.jld", "x", test_data)
         @test isfile("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/data.jld")
-        @test check(d, v, "data.jld", "x") == true
-        @test load_file_array(d, v, "data", "x") == [test_data, test_data]
-        #set_value!(d, 0.5, "anna")
-        #@test dm_check(d, "data.jld", "x") == false
-        d2, v2 = load_config_from_json("task/test_2.json")
-        test_x = load(d, v2, "data.jld", "x")
-        @test test_x == test_data
-
+        @test check(d1, v, "data.jld", "x") == true
+        @test load_file_array(d1, v, "data", "x") == [test_data, test_data]
+        save(d2, v, "data.jld", "x", test_data)
+        @test isfile("./data/alex=1.20_bob=4.00_eve=25.13_sandy=0.21/data.jld")
+        @test check(d2, v, "data.jld", "x") == true
+        @test load(d2, v, "data.jld", "x") == test_data
         test_entry = DataEntry("./data", [[]], [[]])
         save(test_entry, Dict(), "test.jld", "x", test_data)
         @test isfile("./data/test.jld")
@@ -29,15 +29,6 @@ using DM, Test
         rm("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/data-1.jld")
         rm("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/data-2.jld")
         rm("./data/test.jld")
-end
-
-@testset "Iteration" begin
-        activate_param_set("task/params.json")
-        anna_val = ["anna=0.10", "anna=0.50", "anna=1.00"]
-        d, v = load_config_from_json("task/test_range.json")
-        for (res, exp) in zip(v, anna_val)
-                @test DM.get_group_path(d, res) == exp
-        end
 end
 
 @testset "Parameter Set" begin
@@ -64,9 +55,9 @@ end
         d, v = load_config_from_json("task/test_1.json")
         df = DataFrame(A = 1:4, B = ["M", "F", "F", "M"])
         @info "Saving test CSV file."
-        save(d, v, "test.csv", df)
+        save(d["task1"], v, "test.csv", df)
         @test isfile("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/test.csv")
-        @test load(d, v, "test.csv") == df
+        @test load(d["task1"], v, "test.csv") == df
         if Sys.iswindows()
                 GC.gc()
         end
@@ -77,6 +68,7 @@ end
 @testset "HDF5 file support" begin
         activate_param_set("task/params.json")
         d, v = load_config_from_json("task/test_1.json")
+        d = d["task1"]
         test_data = collect(range(0, stop = 1, length = 100))
         @info "Saving test hdf5 file."
         save(d, v, "data.h5", "x", test_data)
