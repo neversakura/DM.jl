@@ -69,7 +69,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Home",
     "title": "DM.load_config_from_json",
     "category": "method",
-    "text": "load_config_from_json(name) -> DataEntry, Tasks\n\nLoad task from task configuration file. Return a generator for all the Task defined in the \"target_values\" field of the configuration file.\n\n\n\n\n\n"
+    "text": "load_config_from_json(name) -> DataEntry, Tasks\n\nLoad tasks from configuration file.\n\n\n\n\n\n"
 },
 
 {
