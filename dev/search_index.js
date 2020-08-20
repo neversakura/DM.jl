@@ -73,11 +73,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "#DM.save-Tuple{AbstractString,AbstractString,Vararg{Any,N} where N}",
+    "location": "#DM.save-Tuple{AbstractString,AbstractString,Any,Vararg{Any,N} where N}",
     "page": "Home",
     "title": "DM.save",
     "category": "method",
-    "text": "save(file_path, group_path, groups)\n\n\nSave data in groups in to file file_path.\n\n\n\n\n\n"
+    "text": "save(file_path, group_path, ext, groups)\n\n\nSave data in groups in to file file_path.\n\n\n\n\n\n"
 },
 
 {
