@@ -5,7 +5,8 @@ function save_jld(
 )
     path, file = splitdir(file_path)
     mkpath(path)
-    jldopen(file_path, "w") do f
+    mode = isfile(file_path) ? "r+" : "w"
+    jldopen(file_path, mode) do f
         for (n, v) in Iterators.partition(groups, 2)
             try
                 f[group_path*"/"*n] = v

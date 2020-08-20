@@ -21,9 +21,3 @@ end
 function _get_function(operation, ext)
     getfield(DM, Symbol(operation * ext))
 end
-
-
-function _get_file_group_path(d::DataEntry, v, file_name::String)
-    folder_path = get_folder_path(d, v)
-    joinpath(folder_path, file_name), get_group_path(d, v)
-end

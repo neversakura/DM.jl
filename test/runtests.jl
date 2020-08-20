@@ -25,10 +25,15 @@ using DM, Test
         @test isfile("./data/test.jld")
 
         @info "Deleting saved jld file."
-        rm("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/data.jld")
-        rm("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/data-1.jld")
-        rm("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/data-2.jld")
-        rm("./data/test.jld")
+        delete(d1, v, "data.jld")
+        delete(d1, v, "data-1.jld")
+        delete(d1, v, "data-2.jld")
+        delete(d2, v, "data.jld")
+        delete(test_entry, Dict(), "test.jld")
+        #rm("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/data.jld")
+        #rm("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/data-1.jld")
+        #rm("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/data-2.jld")
+        #rm("./data/test.jld")
 end
 
 @testset "Parameter Set" begin
@@ -62,7 +67,8 @@ end
                 GC.gc()
         end
         @info "Deleting saved CSV file."
-        rm("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/test.csv")
+        delete(d["task1"], v, "test.csv")
+        #rm("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/test.csv")
 end
 
 @testset "HDF5 file support" begin
@@ -82,5 +88,6 @@ end
         delete(d, v, "data.h5", "y", "z")
         @test !check(d, v, "data.h5", "y")
         @info "Deleting saved hdf5 file."
-        rm("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/data.h5")
+        delete(d, v, "data.h5")
+        #rm("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/data.h5")
 end
