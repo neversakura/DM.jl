@@ -22,14 +22,18 @@ function load_h5(
     group_path::AbstractString,
     groups...,
 )
-    names = [group_path * "/" * i for i in groups]
-    h5open(file_path, "r") do f
-        if length(names) == 1
-            res = read(f, names[1])
-        else
-            res = [read(f, n) for n in names]
+    if isempty(groups)
+        h5open(file_path, "r")
+    else
+        names = [group_path * "/" * i for i in groups]
+        h5open(file_path, "r") do f
+            if length(names) == 1
+                res = read(f, names[1])
+            else
+                res = [read(f, n) for n in names]
+            end
+            res
         end
-        res
     end
 end
 

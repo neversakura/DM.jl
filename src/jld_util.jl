@@ -1,15 +1,14 @@
-function save_jld(
+function save_jld2(
     file_path::AbstractString,
     group_path::AbstractString,
     groups...,
 )
     path, file = splitdir(file_path)
     mkpath(path)
-    mode = isfile(file_path) ? "r+" : "w"
-    jldopen(file_path, mode) do f
+    jldopen(file_path, "a+") do f
         for (n, v) in Iterators.partition(groups, 2)
             try
-                f[group_path*"/"*n] = v
+                f[group_path * "/" * n] = v
             catch
                 @warn "Data name: $(n) already exists. Data not saved."
             end
@@ -18,7 +17,7 @@ function save_jld(
 end
 
 
-function load_jld(
+function load_jld2(
     file_path::AbstractString,
     group_path::AbstractString,
     groups...,
@@ -28,13 +27,13 @@ function load_jld(
 end
 
 
-function check_jld(
+function check_jld2(
     file_path::AbstractString,
     group_path::AbstractString,
     group_name,
 )
     group = group_path * "/" * group_name
     res = jldopen(file_path, "r") do f
-        exists(f, group)
+        haskey(f, group)
     end
 end

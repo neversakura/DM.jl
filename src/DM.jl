@@ -1,6 +1,6 @@
 module DM
 
-using Format, FileIO, JLD, HDF5, Reexport
+using Format, FileIO, JLD2, HDF5, Reexport
 using DocStringExtensions
 import CSV
 import JSON
@@ -16,7 +16,7 @@ include("csv_util.jl")
 export DataEntry
 export load_config_from_json
 export activate_param_set, get_param_set
-export save, load, check, load_file_array, delete, writeattr, readattr
+export save, load, check, load_file_array, delete, writeattr, readattr, read
 @reexport using CSVFiles, DataFrames
 
 for op in (:check, :save, :load, :delete, :writeattr, :readattr)
@@ -26,7 +26,6 @@ for op in (:check, :save, :load, :delete, :writeattr, :readattr)
             file_path = joinpath(folder_path, file_name)
             ext = _get_extension(file_name)
             if isempty(groups) || ext == "csv"
-                @warn "Group path ignored."
                 group_path = ""
             else
                 group_path = get_group_path(d, v)

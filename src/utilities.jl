@@ -5,7 +5,7 @@ function _get_extension(file_name)
     end
     ext = ext[2:end]
     ext = ext == "hdf5" ? "h5" : ext
-    if !(ext in ["jld", "csv", "h5"])
+    if !(ext in ["jld2", "csv", "h5"])
         error("File type $ext is not supported.")
     end
     ext
@@ -16,7 +16,6 @@ function _check_file(file_path)
         error("File: $file_path does not exist.")
     end
 end
-
 
 function _get_function(operation, ext)
     getfield(DM, Symbol(operation * ext))
