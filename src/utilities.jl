@@ -20,3 +20,13 @@ end
 function _get_function(operation, ext)
     getfield(DM, Symbol(operation * ext))
 end
+
+function convert_recursive_array(a)
+    if eltype(a) <: AbstractArray
+        data = [convert_recursive_array(x) for x in a]
+        d = ndims(data[1]) + 1
+        cat(data..., dims=d)
+    else
+        a
+    end
+end

@@ -14,7 +14,7 @@ include("jld_util.jl")
 include("csv_util.jl")
 
 export DataEntry
-export load_config_from_json
+export load_config_from_json, convert_recursive_array
 export activate_param_set, get_param_set
 export save, load, check, load_file_array, delete, writeattr, readattr, read
 @reexport using CSVFiles, DataFrames

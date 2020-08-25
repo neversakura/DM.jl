@@ -89,3 +89,10 @@ end
     @info "Deleting saved hdf5 file."
     delete(d, v, "data.h5")
 end
+
+@testset "Utility function" begin
+    test_array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+    @test convert_recursive_array(test_array) == [[1, 2, 3] [4, 5, 6] [7, 8, 9]]
+    test_array = [[[1,2],[3,4]],[[5,6],[7,8]],[[9,10],[10,11]]]
+    @test convert_recursive_array(test_array) == cat([hcat(x...) for x in test_array]..., dims=3)
+end
