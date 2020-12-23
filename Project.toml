@@ -1,7 +1,7 @@
 name = "DM"
 uuid = "a4c9a0b6-a80f-11e8-2852-5b4a901f9fec"
 authors = ["Sandy <neversakura@hotmail.com>"]
-version = "0.7.1"
+version = "0.7.2"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
