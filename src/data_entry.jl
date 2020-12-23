@@ -17,7 +17,7 @@ end
 """
     print_params(format_dict, value_dict, key)
 
-Print out the path of parameter set given by `key`. `format_dict` and `value_dict` are look-up tables for  parameter formatters and values respectively. `key` should be an valid partition of parameter names.
+Print out the path of parameter set given by `key`. `format_dict` and `value_dict` are look-up tables for the parameter formatters and values respectively. `key` should be an valid partition of parameter names.
 """
 function print_params(format_dict, value_dict, key::Array{String,1})
     res = ""
@@ -55,7 +55,7 @@ end
 """
     get_folder_path(d::DataEntry, values)
 
-Print out the file system path given data entry `d` and corresponding `values`.
+Print out the file system path given data entry `d` and the corresponding `values`.
 """
 function get_folder_path(d::DataEntry, values::Dict)
     joinpath(d.root, print_params(get_param_set(), values, d.folder_entries))
@@ -69,7 +69,7 @@ end
 """
     get_group_path(d::DataEntry, values)
 
-Print out the group path given data entry `d` and corresponding `values`
+Print out the group path given data entry `d` and the corresponding `values`
 """
 function get_group_path(d::DataEntry, values::Dict)
     print_params(get_param_set(), values, d.group_entries)
