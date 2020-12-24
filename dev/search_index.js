@@ -73,6 +73,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#DM.parse_string_to_num-Tuple{Any}",
+    "page": "Home",
+    "title": "DM.parse_string_to_num",
+    "category": "method",
+    "text": "parse_string_to_num(d)\n\nParse the strings in a dictionary d to numbers. ```\n\n\n\n\n\n"
+},
+
+{
     "location": "#DM.save-Tuple{AbstractString,AbstractString,Any,Vararg{Any,N} where N}",
     "page": "Home",
     "title": "DM.save",
