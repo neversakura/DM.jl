@@ -30,3 +30,22 @@ function convert_recursive_array(a)
         a
     end
 end
+
+"""
+    parse_string_to_num(d)
+
+Parse the strings in a dictionary `d` to numbers.
+```
+"""
+function parse_string_to_num(d)
+    res = []
+    for (k, v) in d
+        if isa(v, String)
+            pv = eval(Meta.parse(v))
+        else
+            pv = v
+        end
+        push!(res, k => pv)
+    end
+    Dict(res...)
+end

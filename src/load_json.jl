@@ -6,7 +6,7 @@ Load tasks from configuration file.
 function load_config_from_json(name)
     t = JSON.parsefile(name)
     if haskey(t, "default_values") && t["default_values"] != nothing
-        default_vals = parse_default_values(t["default_values"])
+        default_vals = parse_string_to_num(t["default_values"])
     else
         default_vals = Dict()
     end
@@ -27,23 +27,4 @@ function load_config_from_json(name)
         res[k] = DataEntry(root_path, folder_path, group_path)
     end
     res, default_vals
-end
-
-"""
-    parse_default_values(t)
-
-Parse the dault value given in configuration file.
-```
-"""
-function parse_default_values(t)
-    res = []
-    for (k, v) in t
-        if isa(v, String)
-            pv = eval(Meta.parse(v))
-        else
-            pv = v
-        end
-        push!(res, k => pv)
-    end
-    Dict(res...)
 end
