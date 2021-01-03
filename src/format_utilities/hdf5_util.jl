@@ -65,59 +65,99 @@ function check_h5(
     end
 end
 
-
-function writeattr_h5(
-    file_path::AbstractString,
-    group_path::AbstractString,
-    attr_name::String,
-    attr_value,
-)
-    path, file = splitdir(file_path)
-    mkpath(path)
+function writeattr(d::DataEntry, v, file_name::String, attrs_dict::Dict)
+    folder_path = get_folder_path(d, v)
+    file_path = joinpath(folder_path, file_name)
+    ext = _get_extension(file_name)
+    if !(ext == "h5")
+        throw(ArgumentError("Only hdf5 format supports attributes."))
+    end
+    group_path = get_group_path(d, v)
     group_path = convert(String, group_path)
+    mkpath(folder_path)
     h5open(file_path, "cw") do f
-        attributes(f[group_path])[attr_name] = attr_value
+        for (k, v) in attrs_dict
+            attributes(f[group_path])[k] = v
+        end
     end
 end
 
-function writeattr_h5(
-    file_path::AbstractString,
-    group_path::AbstractString,
-    dataset::String,
-    attr_name::String,
-    attr_value,
-)
-    path, file = splitdir(file_path)
-    mkpath(path)
+function writeattr(d::DataEntry, v, file_name::String, dataset, attrs_dict::Dict)
+    folder_path = get_folder_path(d, v)
+    file_path = joinpath(folder_path, file_name)
+    ext = _get_extension(file_name)
+    if !(ext == "h5")
+        throw(ArgumentError("Only hdf5 format supports attributes."))
+    end
+    group_path = get_group_path(d, v)
     group_path = convert(String, group_path)
+    mkpath(folder_path)
     h5open(file_path, "cw") do f
-        attrs(f[group_path][dataset])[attr_name] = attr_value
+        for (k, v) in attrs_dict
+            attributes(f[group_path][dataset])[k] = v
+        end
     end
 end
 
-function readattr_h5(
-    file_path::AbstractString,
-    group_path::AbstractString,
-    attr_name::String,
-)
-    path, file = splitdir(file_path)
-    mkpath(path)
+writeattr(d::DataEntry, v, file_name::String, attrs_key, attrs_val) = writeattr(d, v, file_name, Dict(attrs_key => attrs_val))
+writeattr(d::DataEntry, v, file_name::String, dataset, attrs_key, attrs_val) = writeattr(d, v, file_name, dataset, Dict(attrs_key => attrs_val))
+
+function readattr(d::DataEntry, v, file_name::String)
+    folder_path = get_folder_path(d, v)
+    file_path = joinpath(folder_path, file_name)
+    _check_file(file_path)
+    ext = _get_extension(file_name)
+    if !(ext == "h5")
+        throw(ArgumentError("Only hdf5 format supports attributes."))
+    end
+    group_path = get_group_path(d, v)
     group_path = convert(String, group_path)
     h5open(file_path, "r") do f
-        read(attributes(f[group_path])[attr_name])
+        Dict(k => read(attributes(f[group_path])[k]) for k in keys(attributes(f[group_path])))
     end
 end
 
-function readattr_h5(
-    file_path::AbstractString,
-    group_path::AbstractString,
-    dataset::String,
-    attr_name::String,
-)
-    path, file = splitdir(file_path)
-    mkpath(path)
+function readattr(d::DataEntry, v, file_name::String, dataset)
+    folder_path = get_folder_path(d, v)
+    file_path = joinpath(folder_path, file_name)
+    _check_file(file_path)
+    ext = _get_extension(file_name)
+    if !(ext == "h5")
+        throw(ArgumentError("Only hdf5 format supports attributes."))
+    end
+    group_path = get_group_path(d, v)
     group_path = convert(String, group_path)
     h5open(file_path, "r") do f
-        read(attrs(f[group_path][dataset])[attr_name])
+        Dict(k => read(attributes(f[group_path][dataset])[k]) for k in keys(attributes(f[group_path])))
+    end
+end
+
+function readattr(d::DataEntry, v, file_name::String, attrs::Vector)
+    folder_path = get_folder_path(d, v)
+    file_path = joinpath(folder_path, file_name)
+    _check_file(file_path)
+    ext = _get_extension(file_name)
+    if !(ext == "h5")
+        throw(ArgumentError("Only hdf5 format supports attributes."))
+    end
+    group_path = get_group_path(d, v)
+    group_path = convert(String, group_path)
+    h5open(file_path, "r") do f
+        Dict(k => read(attributes(f[group_path])[k]) for k in attrs)
+    end
+end
+
+function readattr(d::DataEntry, v, file_name::String, dataset, attrs::Vector)
+    folder_path = get_folder_path(d, v)
+    file_path = joinpath(folder_path, file_name)
+    _check_file(file_path)
+    ext = _get_extension(file_name)
+    if !(ext == "h5")
+        throw(ArgumentError("Only hdf5 format supports attributes."))
+    end
+    group_path = get_group_path(d, v)
+    group_path = convert(String, group_path)
+    h5open(file_path, "r") do f
+        Dict(k => read(attributes(f[group_path][dataset])[k]) for k in attrs)
     end
 end

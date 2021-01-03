@@ -1,4 +1,4 @@
-for op in (:check, :save, :load, :delete, :writeattr, :readattr)
+for op in (:check, :save, :load, :delete)
     eval(quote
         function $op(d::DataEntry, v, file_name::String, groups...)
             folder_path = get_folder_path(d, v)
@@ -69,41 +69,4 @@ function load_file_array(d::DataEntry, v, file_name::String, groups...)
         end
     end
     res
-end
-
-function writeattr(file_path::AbstractString, group_path, ext, attr_name, attr_value)
-    _check_file(file_path)
-    f = _get_function("writeattr_", ext)
-    f(file_path, group_path, attr_name, attr_value)
-end
-
-function writeattr(
-    file_path::AbstractString,
-    group_path,
-    dataset::String,
-    ext,
-    attr_name,
-    attr_value,
-)
-    _check_file(file_path)
-    f = _get_function("writeattr_", ext)
-    f(file_path, group_path, dataset, attr_name, attr_value)
-end
-
-function readattr(file_path::AbstractString, group_path, ext, attr_name)
-    _check_file(file_path)
-    f = _get_function("readattr_", ext)
-    f(file_path, group_path, attr_name)
-end
-
-function readattr(
-    file_path::AbstractString,
-    group_path,
-    dataset::String,
-    ext,
-    attr_name,
-)
-    _check_file(file_path)
-    f = _get_function("readattr_", ext)
-    f(file_path, group_path, dataset, attr_name)
 end
