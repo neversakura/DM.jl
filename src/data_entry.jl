@@ -33,7 +33,7 @@ function print_params(format_dict, value_dict, key::Array{String,1})
         res = res * name * "=" * data_string * "_"
     end
     try
-        chop(res, tail = 1)
+        chop(res, tail=1)
     catch
         ""
     end
@@ -46,7 +46,7 @@ function print_params(format_dict, value_dict, key::Array{Array{String,1},1})
         res = res * param_str * "/"
     end
     try
-        chop(res, tail = 1)
+        chop(res, tail=1)
     catch
         ""
     end

@@ -5,10 +5,9 @@ using DocStringExtensions
 import CSV
 import JSON
 
-include("params.jl")
+include("config.jl")
 include("data_entry.jl")
 include("utilities.jl")
-include("load_json.jl")
 include("format_utilities/hdf5_util.jl")
 include("format_utilities/jld_util.jl")
 include("format_utilities/csv_util.jl")
