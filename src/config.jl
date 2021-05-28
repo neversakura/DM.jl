@@ -63,8 +63,8 @@ function load_config_from_json(name)
         else
             group_path = ()
         end
-        root_path = haskey(v, "root") ? v["root"] : t["root"]
-        res[k] = DataEntry(root_path, folder_path, group_path)
+        root_path = haskey(v, "root") ? joinpath(t["root"], v["root"]) : t["root"]
+        res[k] = DataEntry(root_path, joinpath(t["root"], t["registry"]), folder_path, group_path)
     end
     res, default_vals
 end

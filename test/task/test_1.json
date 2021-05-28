@@ -1,7 +1,8 @@
 {
   "root": "./data",
+  "registry": "registry.csv ",
   "tasks": {
-    "task1":{
+    "task1": {
       "folder": [
         [
           "alex",
@@ -18,7 +19,7 @@
         ]
       ]
     },
-    "task2" :{
+    "task2": {
       "folder": [
         "alex",
         "bob",

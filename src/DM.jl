@@ -1,16 +1,14 @@
 module DM
 
-using Format, FileIO, JLD2, HDF5, Reexport
-using DocStringExtensions
-import CSV
-import JSON
+using Format, FileIO, Reexport
+using HDF5, DocStringExtensions
+import CSV, JSON
 
 include("config.jl")
 include("utilities.jl")
 include("data_entry/base.jl")
 include("data_entry/iterate.jl")
 include("format_utilities/hdf5_util.jl")
-include("format_utilities/jld_util.jl")
 include("format_utilities/csv_util.jl")
 include("file_operation.jl")
 
