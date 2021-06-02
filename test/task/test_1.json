@@ -1,6 +1,5 @@
 {
   "root": "./data",
-  "registry": "registry.csv ",
   "tasks": {
     "task1": {
       "folder": [
