@@ -4,7 +4,10 @@
 
 ## General Concepts
 
-DM.jl module is built around the concepts of `Parameter Set`, `Task` and `Data Entry`. A `Parameter Set` is defined as a set of parameter names with the corresponding formatters. For example, if we want to run a simulation which depends on parameters `alpha` and `beta` and store the results for different `alpha`, `beta` values,  we'd like to store the actual datasets to a location uniquely determined by the parameters' names and values. In the case of scientific computing, where the value of parameters are often specified by (floating point) numbers, it is reasonable to use the string representation of those numbers to specify the location of the actual datasets. The following code block
+`DM.jl` is a hierarchy-model database management system (DBMS) built upon [Hierarchical Data Format](https://www.hdfgroup.org/) (HDF). It combines the filesystem and HDF5 file into a single hierarchy structure. The path to a specific dataset is determined by a set of parameters and their corresponding values. Consider an example where we need to a simulation with different choices of internal parameters `alpha` and `beta`. We'd like to store the actual datasets to a location uniquely determined by the parameters' names (`alpha` and `beta`) and the corresponding values. For instance, `./alpha=1.0_beta=2.0/data.h5` and `./alpha=1.0_beta=1.5/data.h5` store the simulation results for different `beta` values.
+
+## Parameter Set
+In the case of scientific computing, the values of parameters are often specified by (floating point) numbers. To use the corresponding string representation of those numbers, we need to first define the rules to . A `Parameter Set` is defined as a set of parameter names with the corresponding formatters (template strings). The following code block
 ```julia
   julia> activate_param_set("alpha"=>"%.2f", "beta"=>"%d")
 ```
@@ -16,13 +19,8 @@ sets the internal `_current_param_set` to a dictionary with two fields: `alpha` 
   "beta"  => "%d"
 ```
 
-A `Task` of a `Parameter Set` is a specific set of values with respect to a subset of `Parameter Set`. It can be any iterable object whose elements are `(name => value)` pairs. For example, a tuple can specify a `Task`
-```julia
-  julia> ("alpha"=>0.1, "beta"=1)
-```
-The idea behind the design is that, a `Task` maps to a single point in the parameter space/subspace for any computational jobs, i.e. one simulation run. Any computational jobs under different `Task`s should be decoupled from each other so no race condition exists between them.
-
-A `Data Entry` acts as a locator to a specific data set. Instead of implementing a complex database, this module tries to use the tree structure of file system and [Hierarchical Data Format (HDF)](https://www.hdfgroup.org/) to manage and locate the data. `Data Entry` itself is `Task` independent. It only construct the format string of both the file system path and group path from the `Parameter Set`. To be more specific, let's assume the total `Parameter Set` has five parameters, described by the following json file
+## Data Entry
+A `Data Entry` acts as a locator to a specific data set. Instead of implementing a complex database, this module tries to use the tree structure of file system and [Hierarchical Data Format (HDF)](https://www.hdfgroup.org/) to manage and locate the data. It only construct the format string of both the file system path and group path from the `Parameter Set`. To be more specific, let's assume the total `Parameter Set` has five parameters, described by the following `json` file
 ```json
 {
   "alex": "%.2f",

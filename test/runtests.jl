@@ -99,7 +99,6 @@ end
     end
     @info "Deleting saved CSV file."
     delete(d["task1"], v, "test.csv")
-        # rm("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/test.csv")
 end
 
 @testset "HDF5 file support" begin

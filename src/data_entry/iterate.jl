@@ -3,11 +3,11 @@ function walk_entry_file(d::DataEntry, file_name)
     isempty(res) ? nothing : to_dataframe(res)
 end
 
-function walk_entry(d::DataEntry, file_name)
-    res = match_entry_file(d, file_name)
-    for (val_dict, file_path) in res
-    end
-end
+# function walk_entry(d::DataEntry, file_name)
+#     res = match_entry_file(d, file_name)
+#     for (val_dict, file_path) in res
+#     end
+# end
 
 function match_entry_file(d::DataEntry, file_name)
     res = []
@@ -25,10 +25,6 @@ function match_entry_file(d::DataEntry, file_name)
                 end
                 split_entries = vcat(split_entries, [x[1]=>x[2] for x in split_entry])
             end
-            # split_entries = []
-            # for i in 1:length(file_entries)
-            #     split_entries = vcat(split_entries, [split(x, "=") for x in split(file_entries[i], "_")])
-            # end
             val_dict = Dict{String, String}(split_entries)
             for f in files
                 if f == file_name
