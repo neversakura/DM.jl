@@ -57,12 +57,14 @@ end
     delete(d1, v, "data.h5", "y", "z")
     @test !check(d1, v, "data.h5", "y")
     @info "Deleting saved hdf5 file."
+    Sys.iswindows() && GC.gc()
     delete(d1, v, "data.h5")
     delete(d2, v, "data.h5")
 
     save(d1, v, "data-1.h5", "x", test_data)
     save(d1, v, "data-2.h5", "x", test_data)
     load_file_array(d1, v, "data", "x") == [test_data, test_data]
+    Sys.iswindows() && GC.gc()
     delete(d1, v, "data-1.h5")
     delete(d1, v, "data-2.h5")
 
@@ -70,6 +72,7 @@ end
     save(test_entry, Dict(), "test.h5", "x", test_data)
     @test isfile("./data/test.h5")
     @test load(test_entry, Dict(), "test.h5", "x") == test_data
+    Sys.iswindows() && GC.gc()
     delete(test_entry, Dict(), "test.h5")
 end
 
@@ -81,11 +84,29 @@ end
     save(d["task1"], v, "test.csv", df)
     @test isfile("./data/alex=1.20_bob=4.00/eve=25.13_sandy=0.21/test.csv")
     @test load(d["task1"], v, "test.csv") == df
-    if Sys.iswindows()
-        GC.gc()
-    end
+    Sys.iswindows() && GC.gc()
     @info "Deleting saved CSV file."
     delete(d["task1"], v, "test.csv")
+end
+
+@testset "Registry" begin
+    activate_param_set("task/params.json")
+    d, v = load_config_from_json("task/test_1.json")
+    d1 = d["task1"]
+    @test_throws ArgumentError load_registry("test_1.csv")
+    reg = load_registry("test_1.csv", d1)
+    register_entry(reg, d1, v, "data.h5", "res")
+    @test reg == load_registry("data/test.csv")
+    write_registry(reg, "data/test_1.csv")
+    @test isfile("data/test_1.csv")
+
+    v["sandy"] = 0.3
+    register_entry(reg, d1, v, "data.h5", "res")
+    v1 = delete!(copy(v), "sandy")
+    @test query_registry(reg, v) == query_registry(reg, v1, (x)->parse(Float64, x.sandy) > 0.25)
+
+    Sys.iswindows() && GC.gc()
+    rm("data/test_1.csv")
 end
 
 @testset "Utility function" begin

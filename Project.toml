@@ -1,7 +1,7 @@
 name = "DM"
 uuid = "a4c9a0b6-a80f-11e8-2852-5b4a901f9fec"
 authors = ["Sandy <neversakura@hotmail.com>"]
-version = "0.7.4"
+version = "0.7.5"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
@@ -12,6 +12,7 @@ FileIO = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
 Format = "1fa38f19-a742-5d3f-a2b9-30dd87b9d5f8"
 HDF5 = "f67ccb44-e63f-5c2f-98bd-6dc0ccc4ba2f"
 JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
+Query = "1a8c2f83-1ff3-5112-b086-8aa67b057ba1"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 
 [extras]
