@@ -106,5 +106,6 @@ venv.bak/
 .DS_Store
 
 docs/build/
-test/data
+test/data/*
+!test/data/test.csv
 Manifest.toml
