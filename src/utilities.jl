@@ -1,7 +1,7 @@
 function _get_extension(file_name)
     ext = splitext(file_name)[end][2:end]
     ext = ext == "hdf5" ? "h5" : ext
-    !(ext in ["csv", "h5"]) && error("File type $ext is not supported.")
+    !(ext in ["csv", "h5", "jld2"]) && error("File type $ext is not supported.")
     ext
 end
 
@@ -36,3 +36,5 @@ function parse_string_to_num(d)
     end
     Dict(res...)
 end
+
+searchdir(path, key) = filter(x->x=="index.jld2", readdir(path))

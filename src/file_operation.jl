@@ -62,7 +62,7 @@ function load_file_array(d::DataEntry, v, file_name::String, groups...)
     res = []
     for f in f_list
         m = match(r_str, f)
-        if m != nothing
+        if m !== nothing
             f_path = joinpath(folder_path, m.match)
             ext = _get_extension(m.match)
             push!(res, load(f_path, group_path, ext, groups...))

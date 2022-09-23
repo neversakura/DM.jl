@@ -109,3 +109,6 @@ docs/build/
 test/data/*
 !test/data/test.csv
 Manifest.toml
+
+dev
+archive

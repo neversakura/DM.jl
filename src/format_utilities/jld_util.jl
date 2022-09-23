@@ -7,11 +7,7 @@ function save_jld2(
     mkpath(path)
     jldopen(file_path, "a+") do f
         for (n, v) in Iterators.partition(groups, 2)
-            try
-                f[group_path * "/" * n] = v
-            catch
-                @warn "Data name: $(n) already exists. Data not saved."
-            end
+            f[group_path * "/" * n] = v
         end
     end
 end

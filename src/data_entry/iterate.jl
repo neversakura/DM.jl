@@ -3,12 +3,6 @@ function walk_entry_file(d::DataEntry, file_name)
     isempty(res) ? nothing : to_dataframe(res)
 end
 
-# function walk_entry(d::DataEntry, file_name)
-#     res = match_entry_file(d, file_name)
-#     for (val_dict, file_path) in res
-#     end
-# end
-
 function match_entry_file(d::DataEntry, file_name)
     res = []
     for (root, dirs, files) in walkdir(d.root)
