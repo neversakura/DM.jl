@@ -17,6 +17,7 @@ struct DataEntry
     DataEntry(n, r, p, f, g) = new(n, r, p, [sort(i) for i in f], [sort(i) for i in g])
 end
 
+get_params(d::DataEntry) = d.params |> keys |> collect
 get_params_fmt(d::DataEntry) = d.params
 get_root(d::DataEntry) = d.root
 get_name(d::DataEntry) = d.name
