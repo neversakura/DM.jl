@@ -33,22 +33,30 @@ function load_registry(file, entry::DataEntry)
     end
 end
 
-function query_registry(reg, vals)
-    params_template = get_param_set()
-    vals_str = Dict(Symbol(k)=>cfmt(params_template[k], v) for (k, v) in vals)
+"""
+    query_data_frame(df, vals)
+
+Query entries in a DataFrame `df` with the same column values given in `vals`.
+"""
+function query_data_frame(df, vals)
+    vals_str = Dict(Symbol(k)=>v for (k, v) in vals)
     vals_keys = collect(keys(vals_str))
-    @from i in reg begin
+    @from i in df begin
         @where all((x)->getproperty(i, x)==vals_str[x], vals_keys)
         @select i
         @collect DataFrame
     end
 end
 
-function query_registry(reg, vals, condition)
-    params_template = get_param_set()
-    vals_str = Dict(Symbol(k)=>cfmt(params_template[k], v) for (k, v) in vals)
+"""
+    query_data_frame(df, vals, condition)
+
+Query entries in a DataFrame `df` with columns selected by `condition` share the same values as `vals`. 
+"""
+function query_data_frame(df, vals, condition)
+    vals_str = Dict(Symbol(k)=>v for (k, v) in vals)
     vals_keys = collect(keys(vals_str))
-    @from i in reg begin
+    @from i in df begin
         @where all((x)->getproperty(i, x)==vals_str[x], vals_keys) && condition(i)
         @select i
         @collect DataFrame
