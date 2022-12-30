@@ -20,6 +20,8 @@ end
 get_params_fmt(d::DataEntry) = d.params
 get_root(d::DataEntry) = d.root
 get_name(d::DataEntry) = d.name
+get_index(d::DataEntry) = joinpath(d.root , "index_entry.jld2")
+check_index(d::DataEntry) = isfile(joinpath(d.root , "index_entry.jld2"))
 
 
 """
@@ -86,4 +88,31 @@ end
 function get_group_path(d::DataEntry, values)
     v = Dict(values...)
     print_params(d.params, v, d.group_entries)
+end
+
+"""
+    truncate_param_val(entry::DataEntry, name, value::AbstractFloat)
+
+Truncate the floating point parameter `name` with `value` according to rule provided in `entry`.
+"""
+function truncate_param_val(entry::DataEntry, name::AbstractString, value::AbstractFloat)
+    str = cfmt(entry.params[name], value)
+    eval(Meta.parse(str))
+end
+
+truncate_param_val(::DataEntry, ::AbstractString, values::Integer) = values
+
+truncate_param_val(::DataEntry, ::AbstractString, value::AbstractString) = value
+
+"""
+    truncate_params(entry::DataEntry, vals::Dict)
+
+Truncate the parameter values given in `vals` according to rules defined in `entry`.
+"""
+function truncate_params(entry::DataEntry, vals::Dict)
+    res = Dict{String,Any}()
+    for (k, v) in vals
+        res[k] = truncate_param_val(entry, k, v)
+    end
+    res
 end

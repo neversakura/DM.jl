@@ -40,7 +40,62 @@ function readgroups(path)
 end
 
 function delete_from_index_file(path, name)
-    jldopen(joinpath(path, "index.jld2"), "r") do file
+    jldopen(joinpath(path, "index.jld2"), "r+") do file
         delete!(file, name)
+    end
+end
+
+"""
+    load_index(path)
+
+Load all the entry names in the `index.jld2` file under `path`. Return the result as an array of strings.
+"""
+load_index(path) = read_index_strings(joinpath(path, "index.jld2"))
+
+"""
+    load_index(path, entry_names)
+
+Load the entry information of `entry_name` from `index.jld2` file under `path`.
+"""
+function load_index(path, entry_name)
+    load_from_index_file(path, entry_name)
+end
+
+"""
+    read_index_strings(file)
+
+Load the entry information from an index `file`. Return an array of all the entry names as strings. 
+"""
+function read_index_strings(file)
+    jldopen(file, "r") do file
+        res = []
+        for k in keys(file)
+            subgroups = iterate_index_groups(file[k])
+            if isempty(subgroups)
+                push!(res, [k])
+            else
+                push!(res, k * "/" .* subgroups)
+            end
+        end
+        res |> Iterators.flatten |> collect
+    end
+end
+
+function iterate_index_groups(G::JLD2.Group)
+    if haskey(G, "root")
+        return []
+    else
+        res = []
+        for k in keys(G)
+            klist = iterate_index_groups(G[k])
+            if isempty(klist)
+                push!(res, k)
+            else
+                for ksub in klist
+                    push!(res, k * "/" * ksub)
+                end
+            end
+        end
+        return res
     end
 end

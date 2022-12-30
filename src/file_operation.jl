@@ -1,6 +1,7 @@
 for op in (:check, :save, :load, :delete)
     eval(quote
         function $op(d::DataEntry, v, file_name::String, groups...)
+            v = param_check(d, v)
             folder_path = get_folder_path(d, v)
             file_path = joinpath(folder_path, file_name)
             ext = _get_extension(file_name)
@@ -54,6 +55,7 @@ function delete(
 end
 
 function load_file_array(d::DataEntry, v, file_name::String, groups...)
+    v = param_check(d, v)
     r_str = Regex(file_name * "-(\\d+)\\.(.+)")
     folder_path = get_folder_path(d, v)
     f_list = readdir(folder_path)
@@ -69,4 +71,14 @@ function load_file_array(d::DataEntry, v, file_name::String, groups...)
         end
     end
     res
+end
+
+function param_check(d::DataEntry, v::Dict)
+    vt = truncate_params(d, v)
+    vt == v ? nothing : @warn "One or more parameters are truncated according to schemas. Consider modifying the parameter values."
+    vt
+end
+
+function dm_save(d::DataEntry, v, file_name::String, groups...; force == false)
+    save(d, v, file_name, groups...)
 end

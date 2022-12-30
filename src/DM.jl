@@ -19,15 +19,15 @@ include("index_file.jl")
 
 export DataEntry
 export convert_recursive_array, parse_string_to_num
-export save, load, check, load_file_array, delete, writeattr, readattr, read
+export load_file_array, writeattr, readattr, read
 export walk_entry_file
-export load_registry, register_entry, write_registry
 export save_to_index_file, load_from_index_file, get_root, get_params_fmt, get_name, readgroups, delete_from_index_file
 
 # dev APIs
 
 # new public APIs
 # TODO: refractor the APIs above
+export save, load, check, delete
 export load_index, truncate_params
 
 end # end module
