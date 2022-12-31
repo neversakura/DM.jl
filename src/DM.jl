@@ -28,6 +28,7 @@ export save_to_index_file, load_from_index_file, get_root, get_params_fmt, get_n
 # new public APIs
 # TODO: refractor the APIs above
 export save, load, check, delete
-export load_index, truncate_params
+export load_index, set_index, get_index, del_index, add2_index
+export truncate_params
 
 end # end module

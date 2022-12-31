@@ -38,3 +38,9 @@ function parse_string_to_num(d)
 end
 
 searchdir(path, key) = filter(x->x=="index.jld2", readdir(path))
+
+function dataframe_compstr(vals::Dict, file_name::String, data_name::String)
+    [[Symbol(k) => (x)-> x .== v for (k, v) in vals]; [:file=>(x)->x.==file_name, :data=>(x)->x.==data_name]]
+end
+
+dataframe_row_iter(dfr::DataFrameRow) = zip(keys(dfr), dfr)

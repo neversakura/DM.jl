@@ -29,7 +29,18 @@ function check_jld2(
     group_name,
 )
     group = group_path * "/" * group_name
-    res = jldopen(file_path, "r") do f
+    jldopen(file_path, "r") do f
         haskey(f, group)
     end
+end
+
+function delete_jld2(file_path::AbstractString, group_path::AbstractString, group_name)
+    group = group_path * "/" * group_name
+    empty = jldopen(file_path, "r+") do f
+        delete!(f, group)
+        isempty(f[group_path]) ? delete!(f, group_path) : nothing
+        isempty(f)
+    end
+    # TODO: check the parental nodes
+    empty ? rm(file_path) : nothing
 end

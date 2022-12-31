@@ -78,7 +78,3 @@ function param_check(d::DataEntry, v::Dict)
     vt == v ? nothing : @warn "One or more parameters are truncated according to schemas. Consider modifying the parameter values."
     vt
 end
-
-function dm_save(d::DataEntry, v, file_name::String, groups...; force == false)
-    save(d, v, file_name, groups...)
-end

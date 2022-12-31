@@ -21,8 +21,8 @@ get_params(d::DataEntry) = d.params |> keys |> collect
 get_params_fmt(d::DataEntry) = d.params
 get_root(d::DataEntry) = d.root
 get_name(d::DataEntry) = d.name
-get_index(d::DataEntry) = joinpath(d.root , "index_entry.jld2")
-check_index(d::DataEntry) = isfile(joinpath(d.root , "index_entry.jld2"))
+get_index(d::DataEntry) = joinpath(d.root, "index_entry.jld2")
+check_index(d::DataEntry) = isfile(joinpath(d.root, "index_entry.jld2"))
 
 
 """
@@ -116,4 +116,65 @@ function truncate_params(entry::DataEntry, vals::Dict)
         res[k] = truncate_param_val(entry, k, v)
     end
     res
+end
+
+# index file operatations for DataEntry
+function set_index(d::DataEntry, val, file_name, data_name)
+    val = param_check(d, val)
+    df = DataFrame([[v for v in val]; ["file" => file_name, "data" => data_name]])
+    jldopen(joinpath(d.root, "index_entry.jld2"), "a+") do f
+        f[d.name] = df
+    end
+end
+
+function get_index(d::DataEntry)
+    index_file = joinpath(d.root, "index_entry.jld2")
+    try
+        jldopen(index_file, "r") do f
+            f[d.name]
+        end
+    catch
+        throw(ArgumentError("No index file exists for this data entry."))
+    end
+end
+
+function del_index(d::DataEntry, val, file_name, data_name)
+    val = param_check(d, val)
+    jldopen(joinpath(d.root, "index_entry.jld2"), "r+") do f
+        dsub = query_data_frame_con(f[d.name], val, file_name, data_name)
+        delete!(f, d.name)
+        if !isempty(dsub)
+            f[d.name] = dsub
+        end
+    end
+end
+
+function query_data_frame_con(df, vals, fn, dn)
+    vals_str = Dict(Symbol(k)=>v for (k, v) in vals)
+    vals_str[:file]=fn
+    vals_str[:data]=dn
+    vals_keys = collect(keys(vals_str))
+    @from i in df begin
+        @where any((x)->getproperty(i, x)!=vals_str[x], vals_keys)
+        @select i
+        @collect DataFrame
+    end
+end
+
+function add2_index(d::DataEntry, val, file_name, data_name)
+    jldopen(joinpath(d.root, "index_entry.jld2"), "r+") do f
+        if haskey(f, d.name)
+            val = param_check(d, val)
+            df = f[d.name]
+            if isempty(subset(f[d.name], DM.dataframe_compstr(val, file_name, data_name)...))
+                push!(df, Dict([[Symbol(k) => v for (k, v) in val]; [:file => file_name, :data => data_name]]))
+                delete!(f, d.name)
+                f[d.name] = df
+            else
+                @warn "Index already exists."
+            end
+        else
+            set_index(d, val, file_name, data_name)
+        end
+    end
 end
