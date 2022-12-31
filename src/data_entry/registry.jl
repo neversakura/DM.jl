@@ -1,3 +1,4 @@
+# TODO: the content of this file should be obsolete. check and delete this file if OK
 function build_new_registry(d::DataEntry)
     params = get_params(d)
     DataFrame(vcat([x=>String[] for x in params], ["file"=>String[], "group"=>String[]]))
@@ -57,17 +58,4 @@ function query_data_frame(df, vals, condition)
         @select i
         @collect DataFrame
     end
-end
-
-function write_index_entry(d::DataEntry, vals, file_name, data_name)
-    # check if the index file exist
-    if check_index(d)
-    else
-        group_path = get_group_path(d, vals) * "/" * data_name
-        DataFrame([[x for x in vals]; ["file"=>file_name, "group"=>group_path]])
-    end
-end
-
-function pad_val_dict(val, file_name, file_path, group_path)
-    [[x for x in val]; ["file"=>file_name, "file_path"=>file_path, "group_path"=>group_path]]
 end

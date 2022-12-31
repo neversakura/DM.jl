@@ -21,14 +21,15 @@ export DataEntry
 export convert_recursive_array, parse_string_to_num
 export load_file_array, writeattr, readattr, read
 export walk_entry_file
-export save_to_index_file, load_from_index_file, get_root, get_params_fmt, get_name, readgroups, delete_from_index_file
+export save_to_index_file, load_from_index_file, get_root, get_params_fmt, get_name, readgroups
 
 # dev APIs
 
 # new public APIs
 # TODO: refractor the APIs above
 export save, load, check, delete
-export load_index, set_index, get_index, del_index, add2_index
+export load_entry, delete_entry
+export set_index, get_index, del_index, add2_index
 export truncate_params
 
 end # end module

@@ -39,34 +39,40 @@ function readgroups(path)
     end
 end
 
-function delete_from_index_file(path, name)
+
+"""
+    delete_entry(entry, name)
+
+Delete the entry in the `index.jld2` file under `path`.
+"""
+function delete_entry(path, name)
     jldopen(joinpath(path, "index.jld2"), "r+") do file
         delete!(file, name)
     end
 end
 
 """
-    load_index(path)
+    load_entry(path)
 
 Load all the entry names in the `index.jld2` file under `path`. Return the result as an array of strings.
 """
-load_index(path) = read_index_strings(joinpath(path, "index.jld2"))
+load_entry(path) = read_entry_strings(joinpath(path, "index.jld2"))
 
 """
-    load_index(path, entry_names)
+    load_entry(path, entry_names)
 
 Load the entry information of `entry_name` from `index.jld2` file under `path`.
 """
-function load_index(path, entry_name)
+function load_entry(path, entry_name)
     load_from_index_file(path, entry_name)
 end
 
 """
-    read_index_strings(file)
+    read_entry_strings(file)
 
 Load the entry information from an index `file`. Return an array of all the entry names as strings. 
 """
-function read_index_strings(file)
+function read_entry_strings(file)
     jldopen(file, "r") do file
         res = []
         for k in keys(file)

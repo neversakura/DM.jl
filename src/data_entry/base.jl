@@ -21,7 +21,6 @@ get_params(d::DataEntry) = d.params |> keys |> collect
 get_params_fmt(d::DataEntry) = d.params
 get_root(d::DataEntry) = d.root
 get_name(d::DataEntry) = d.name
-get_index(d::DataEntry) = joinpath(d.root, "index_entry.jld2")
 check_index(d::DataEntry) = isfile(joinpath(d.root, "index_entry.jld2"))
 
 
@@ -68,7 +67,7 @@ end
 
 Print out the file system path given data entry `d` and the corresponding `values`.
 """
-function get_folder_path(d::DataEntry, values::Dict)
+function get_folder_path(d::DataEntry, values::Union{Dict, DataFrameRow})
     joinpath(d.root, print_params(d.params, values, d.folder_entries))
 end
 
@@ -82,7 +81,7 @@ end
 
 Print out the group path given data entry `d` and the corresponding `values`
 """
-function get_group_path(d::DataEntry, values::Dict)
+function get_group_path(d::DataEntry, values::Union{Dict, DataFrameRow})
     print_params(d.params, values, d.group_entries)
 end
 

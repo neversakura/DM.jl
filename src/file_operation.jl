@@ -1,6 +1,6 @@
 for op in (:check, :save, :load, :delete)
     eval(quote
-        function $op(d::DataEntry, v, file_name::String, groups...)
+        function $op(d::DataEntry, v::AbstractDict, file_name::String, groups...)
             v = param_check(d, v)
             folder_path = get_folder_path(d, v)
             file_path = joinpath(folder_path, file_name)
@@ -11,6 +11,24 @@ for op in (:check, :save, :load, :delete)
                 group_path = get_group_path(d, v)
             end
             $op(file_path, group_path, ext, groups...)
+        end
+    end)
+end
+
+for op in (:check, :save, :load, :delete)
+    eval(quote
+        function $op(d::DataEntry, v::DataFrameRow)
+            file_name = v["file"]
+            groups = v["data"]
+            folder_path = get_folder_path(d, v)
+            file_path = joinpath(folder_path, file_name)
+            ext = _get_extension(file_name)
+            if ext == "csv"
+                group_path = ""
+            else
+                group_path = get_group_path(d, v)
+            end
+            $op(file_path, group_path, ext, groups)
         end
     end)
 end
