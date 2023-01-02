@@ -148,7 +148,7 @@ function del_index(d::DataEntry, val, file_name, data_name)
     end
 end
 
-function query_data_frame_con(df, vals, fn, dn)
+function query_data_frame_con(df, vals, fn, dn::String)
     vals_str = Dict(Symbol(k)=>v for (k, v) in vals)
     vals_str[:file]=fn
     vals_str[:data]=dn
@@ -160,18 +160,57 @@ function query_data_frame_con(df, vals, fn, dn)
     end
 end
 
-function add2_index(d::DataEntry, val, file_name, data_name)
+function query_data_frame_con(df, vals, fn, dn::AbstractArray)
+    vals_str = Dict(Symbol(k)=>v for (k, v) in vals)
+    vals_str[:file]=fn
+    vals_keys = collect(keys(vals_str))
+    @from i in df begin
+        @where any((x)->getproperty(i, x)!=vals_str[x], vals_keys) || !(getproperty(i, :data) ∈ dn)
+        @select i
+        @collect DataFrame
+    end
+end
+
+function add2_index(d::DataEntry, val, file_name, data_name::String)
     jldopen(joinpath(d.root, "index_entry.jld2"), "r+") do f
         if haskey(f, d.name)
             val = param_check(d, val)
             df = f[d.name]
-            if isempty(subset(f[d.name], DM.dataframe_compstr(val, file_name, data_name)...))
+            if isempty(subset(f[d.name], dataframe_compstr(val, file_name, data_name)...))
                 push!(df, Dict([[Symbol(k) => v for (k, v) in val]; [:file => file_name, :data => data_name]]))
                 delete!(f, d.name)
                 f[d.name] = df
             else
                 @warn "Index already exists."
             end
+        else
+            set_index(d, val, file_name, data_name)
+        end
+    end
+end
+
+function add2_index(d::DataEntry, val, file_name, data_name::AbstractArray)
+    jldopen(joinpath(d.root, "index_entry.jld2"), "r+") do f
+        if haskey(f, d.name)
+            val = param_check(d, val)
+            df = f[d.name]
+            dsub = subset(f[d.name], dataframe_compstr(val, file_name)...)
+            if isempty(dsub)
+                for data in data_name
+                    push!(df, Dict([[Symbol(k) => v for (k, v) in val]; [:file => file_name, :data => data]]))
+                end
+            else
+                existing_data =  dsub.data
+                for data in data_name
+                    if data ∈ existing_data
+                        @warn "Index $data already exists."
+                    else
+                        push!(df, Dict([[Symbol(k) => v for (k, v) in val]; [:file => file_name, :data => data]]))
+                    end
+                end
+            end
+            delete!(f, d.name)
+            f[d.name] = df
         else
             set_index(d, val, file_name, data_name)
         end
