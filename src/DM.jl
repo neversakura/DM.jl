@@ -21,7 +21,7 @@ export DataEntry
 export convert_recursive_array, parse_string_to_num
 export load_file_array, writeattr, readattr, read
 export walk_entry_file
-export save_to_index_file, load_from_index_file, get_root, get_params_fmt, get_name, readgroups
+export save_to_index_file, get_root, get_params_fmt, get_name, readgroups
 
 # dev APIs
 

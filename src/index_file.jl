@@ -26,13 +26,6 @@ function check_name_index_file(path, d::DataEntry)
     end
 end
 
-function load_from_index_file(path, name)
-    file_path = joinpath(path, "index.jld2")
-    (r, p, f, g) = JLD2.load(file_path, name * "/root", name * "/params", name * "/folders", name * "/groups")
-    r = joinpath(path, r)
-    DataEntry(name, r, p, f, g)
-end
-
 function readgroups(path)
     jldopen(joinpath(path, "index.jld2"), "r") do file
         keys(file)
@@ -61,10 +54,13 @@ load_entry(path) = read_entry_strings(joinpath(path, "index.jld2"))
 """
     load_entry(path, entry_names)
 
-Load the entry information of `entry_name` from `index.jld2` file under `path`.
+Load the information of entry `name` from `index.jld2` file under `path`.
 """
-function load_entry(path, entry_name)
-    load_from_index_file(path, entry_name)
+function load_entry(path, name)
+    file_path = joinpath(path, "index.jld2")
+    (r, p, f, g) = JLD2.load(file_path, name * "/root", name * "/params", name * "/folders", name * "/groups")
+    r = joinpath(path, r)
+    DataEntry(name, r, p, f, g)
 end
 
 """
