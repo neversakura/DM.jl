@@ -121,6 +121,7 @@ end
 
 # index file operatations for DataEntry
 function set_index(d::DataEntry, val, file_name, data_name)
+    mkpath(d.root)
     val = param_check(d, val)
     df = DataFrame([[v for v in val]; ["file" => file_name, "data" => data_name]])
     jldopen(joinpath(d.root, "index_entry.jld2"), "a+") do f
@@ -174,7 +175,8 @@ function query_data_frame_con(df, vals, fn, dn::AbstractArray)
 end
 
 function add2_index(d::DataEntry, val, file_name, data_name::String)
-    jldopen(joinpath(d.root, "index_entry.jld2"), "r+") do f
+    mkpath(d.root)
+    jldopen(joinpath(d.root, "index_entry.jld2"), "a+") do f
         if haskey(f, d.name)
             val = param_check(d, val)
             df = f[d.name]
