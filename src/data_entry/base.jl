@@ -107,12 +107,14 @@ truncate_param_val(::DataEntry, ::AbstractString, value::AbstractString) = value
 """
     truncate_params(entry::DataEntry, vals::Dict)
 
-Truncate the parameter values given in `vals` according to rules defined in `entry`.
+Truncate the parameter values given in `vals` according to rules defined in `entry`. The function will remove the values which do not appear in the parameter list of `entry`.
 """
 function truncate_params(entry::DataEntry, vals::Dict)
     res = Dict{String,Any}()
     for (k, v) in vals
-        res[k] = truncate_param_val(entry, k, v)
+        if haskey(entry.params, k)
+            res[k] = truncate_param_val(entry, k, v)
+        end
     end
     res
 end
