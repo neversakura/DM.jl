@@ -194,7 +194,8 @@ function add2_index(d::DataEntry, val, file_name, data_name::String)
 end
 
 function add2_index(d::DataEntry, val, file_name, data_name::AbstractArray)
-    jldopen(joinpath(d.root, "index_entry.jld2"), "r+") do f
+    mkpath(d.root)
+    jldopen(joinpath(d.root, "index_entry.jld2"), "a+") do f
         if haskey(f, d.name)
             val = param_check(d, val)
             df = f[d.name]
