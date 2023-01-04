@@ -33,9 +33,9 @@ using DM, Test
 
     save_to_index_file("data", entry)
     @test_throws ArgumentError save_to_index_file("data", entry)
-    load_entry = load_from_index_file("data", "test")
-    @test load_entry |> get_root == root
-    @test load_entry |> get_params_fmt == params
-    @test load_entry |> get_name == "test"
+    loaded_entry = load_entry("data", "test")
+    @test loaded_entry |> get_root == joinpath("data", root)
+    @test loaded_entry |> get_params_fmt == params
+    @test loaded_entry |> get_name == "test"
     rm("data/index.jld2")
 end
