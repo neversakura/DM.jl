@@ -11,6 +11,7 @@ function load_index_file(path)
 end
 
 function save_to_index_file(path, d::DataEntry)
+	mkpath(path)
     jldopen(joinpath(path, "index.jld2"), "a+") do file
         entry_group = JLD2.Group(file, d.name)
         entry_group["root"] = d.root
