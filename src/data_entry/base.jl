@@ -140,10 +140,31 @@ function get_index(d::DataEntry)
     end
 end
 
+"""
+    del_index(d::DataEntry, val, file_name, data_name)
+
+Delete the index with parameter values `val`, `file_name`
+and `data_name` from the DataEntry `d`.
+"""
 function del_index(d::DataEntry, val, file_name, data_name)
     val = param_check(d, val)
     jldopen(joinpath(d.root, "index_entry.jld2"), "r+") do f
         dsub = query_data_frame_con(f[d.name], val, file_name, data_name)
+        delete!(f, d.name)
+        if !isempty(dsub)
+            f[d.name] = dsub
+        end
+    end
+end
+
+"""
+    del_index(d::DataEntry, subframe::AbstractDataFrame)
+
+Delete the indices with parameters given in DataFrame `subframe` from the DataEntry `d`.
+"""
+function del_index(d::DataEntry, subframe::AbstractDataFrame)
+    jldopen(joinpath(d.root, "index_entry.jld2"), "r+") do f
+        dsub = antijoin(f[d.name], subframe, on=names(subframe))
         delete!(f, d.name)
         if !isempty(dsub)
             f[d.name] = dsub
