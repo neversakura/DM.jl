@@ -57,9 +57,9 @@ Sys.iswindows() && GC.gc()
 delete(entry, values, "data-1.h5")
 delete(entry, values, "data-2.h5")
 
-test_entry = DataEntry("test", "./data", params, [[]], [[]])
-save(test_entry, Dict(), "test.h5", "x", test_data)
+entry_empty_list = DataEntry("empty_list_test", "./data", params, [[]], [[]])
+save(entry_empty_list, Dict(), "test.h5", "x", test_data)
 @test isfile("./data/test.h5")
-@test load(test_entry, Dict(), "test.h5", "x") == test_data
+@test load(entry_empty_list, Dict(), "test.h5", "x") == test_data
 Sys.iswindows() && GC.gc()
-delete(test_entry, Dict(), "test.h5")
+delete(entry_empty_list, Dict(), "test.h5")
