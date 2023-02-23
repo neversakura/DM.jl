@@ -199,7 +199,6 @@ function add2_index(d::DataEntry, val, file_name, data_name::String)
     mkpath(d.root)
     jldopen(joinpath(d.root, "index_entry.jld2"), "a+") do f
         if haskey(f, d.name)
-            val = param_check(d, val)
             df = f[d.name]
             if isempty(subset(f[d.name], dataframe_compstr(val, file_name, data_name)...))
                 push!(df, Dict([[Symbol(k) => v for (k, v) in val]; [:file => file_name, :data => data_name]]))
@@ -218,7 +217,6 @@ function add2_index(d::DataEntry, val, file_name, data_name::AbstractArray)
     mkpath(d.root)
     jldopen(joinpath(d.root, "index_entry.jld2"), "a+") do f
         if haskey(f, d.name)
-            val = param_check(d, val)
             df = f[d.name]
             dsub = subset(f[d.name], dataframe_compstr(val, file_name)...)
             if isempty(dsub)
