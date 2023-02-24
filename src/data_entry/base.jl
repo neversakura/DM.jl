@@ -67,7 +67,7 @@ end
 
 Print out the file system path given data entry `d` and the corresponding `values`.
 """
-function get_folder_path(d::DataEntry, values::Union{Dict, DataFrameRow})
+function get_folder_path(d::DataEntry, values::Union{Dict,DataFrameRow})
     joinpath(d.root, print_params(d.params, values, d.folder_entries))
 end
 
@@ -81,7 +81,7 @@ end
 
 Print out the group path given data entry `d` and the corresponding `values`
 """
-function get_group_path(d::DataEntry, values::Union{Dict, DataFrameRow})
+function get_group_path(d::DataEntry, values::Union{Dict,DataFrameRow})
     print_params(d.params, values, d.group_entries)
 end
 
@@ -147,14 +147,16 @@ Delete the index with parameter values `val`, `file_name`
 and `data_name` from the DataEntry `d`.
 """
 function del_index(d::DataEntry, val, file_name, data_name)
-    val = param_check(d, val)
-    jldopen(joinpath(d.root, "index_entry.jld2"), "r+") do f
+    file_path = joinpath(d.root, "index_entry.jld2") 
+    empty = jldopen(file_path, "r+") do f
         dsub = query_data_frame_con(f[d.name], val, file_name, data_name)
         delete!(f, d.name)
         if !isempty(dsub)
             f[d.name] = dsub
         end
+        isempty(f|>keys)
     end
+    empty ? rm(file_path) : nothing
 end
 
 """
@@ -163,35 +165,76 @@ end
 Delete the indices with parameters given in DataFrame `subframe` from the DataEntry `d`.
 """
 function del_index(d::DataEntry, subframe::AbstractDataFrame)
-    jldopen(joinpath(d.root, "index_entry.jld2"), "r+") do f
+    file_path = joinpath(d.root, "index_entry.jld2") 
+    empty = jldopen(file_path, "r+") do f
         dsub = antijoin(f[d.name], subframe, on=names(subframe))
         delete!(f, d.name)
         if !isempty(dsub)
             f[d.name] = dsub
         end
+        isempty(f|>keys)
     end
+    empty ? rm(file_path) : nothing
+end
+
+function del_index(d::DataEntry, framerow::DataFrameRow)
+    file_path = joinpath(d.root, "index_entry.jld2") 
+    empty = jldopen(file_path, "r+") do f
+        dsub = query_data_frame_con(f[d.name], framerow)
+        delete!(f, d.name)
+        if !isempty(dsub)
+            f[d.name] = dsub
+        end
+        isempty(f|>keys)
+    end
+    empty ? rm(file_path) : nothing
+end
+
+function del_file_from_index(d::DataEntry, file_name)
+    file_path = joinpath(d.root, "index_entry.jld2")
+    empty = jldopen(file_path, "r+") do f
+        ind_frame = f[d.name]
+        file_frame = get(groupby(ind_frame, :file), 
+            (file=file_name,), nothing)
+        dsub = antijoin(ind_frame, file_frame, on=names(file_frame))
+        delete!(f, d.name)
+        if !isempty(dsub)
+            f[d.name] = dsub
+        end
+        isempty(f|>keys)
+    end
+    empty ? rm(file_path) : nothing
 end
 
 function query_data_frame_con(df, vals, fn, dn::String)
-    vals_str = Dict(Symbol(k)=>v for (k, v) in vals)
-    vals_str[:file]=fn
-    vals_str[:data]=dn
+    vals_str = Dict{Symbol, Any}(Symbol(k) => v for (k, v) in vals)
+    vals_str[:file] = fn
+    vals_str[:data] = dn
     vals_keys = collect(keys(vals_str))
     @from i in df begin
-        @where any((x)->getproperty(i, x)!=vals_str[x], vals_keys)
+        @where any((x) -> getproperty(i, x) != vals_str[x], vals_keys)
         @select i
         @collect DataFrame
     end
 end
 
 function query_data_frame_con(df, vals, fn, dn::AbstractArray)
-    vals_str = Dict(Symbol(k)=>v for (k, v) in vals)
-    vals_str[:file]=fn
+    vals_str = Dict{Symbol, Any}(Symbol(k) => v for (k, v) in vals)
+    vals_str[:file] = fn
     vals_keys = collect(keys(vals_str))
     @from i in df begin
-        @where any((x)->getproperty(i, x)!=vals_str[x], vals_keys) || !(getproperty(i, :data) ∈ dn)
+        @where any((x) -> getproperty(i, x) != vals_str[x], vals_keys) || !(getproperty(i, :data) ∈ dn)
         @select i
         @collect DataFrame
+    end
+end
+
+function query_data_frame_con(df, framerow::DataFrameRow)
+    vals_keys = [Symbol(k) for k in names(framerow)]
+    @from i in df begin
+        @where any((x) -> getproperty(i, x) != framerow[x], vals_keys)
+        @select i
+        @collect DataFrame 
     end
 end
 
@@ -199,7 +242,6 @@ function add2_index(d::DataEntry, val, file_name, data_name::String)
     mkpath(d.root)
     jldopen(joinpath(d.root, "index_entry.jld2"), "a+") do f
         if haskey(f, d.name)
-            val = param_check(d, val)
             df = f[d.name]
             if isempty(subset(f[d.name], dataframe_compstr(val, file_name, data_name)...))
                 push!(df, Dict([[Symbol(k) => v for (k, v) in val]; [:file => file_name, :data => data_name]]))
@@ -218,7 +260,6 @@ function add2_index(d::DataEntry, val, file_name, data_name::AbstractArray)
     mkpath(d.root)
     jldopen(joinpath(d.root, "index_entry.jld2"), "a+") do f
         if haskey(f, d.name)
-            val = param_check(d, val)
             df = f[d.name]
             dsub = subset(f[d.name], dataframe_compstr(val, file_name)...)
             if isempty(dsub)
@@ -226,7 +267,7 @@ function add2_index(d::DataEntry, val, file_name, data_name::AbstractArray)
                     push!(df, Dict([[Symbol(k) => v for (k, v) in val]; [:file => file_name, :data => data]]))
                 end
             else
-                existing_data =  dsub.data
+                existing_data = dsub.data
                 for data in data_name
                     if data ∈ existing_data
                         @warn "Index $data already exists."

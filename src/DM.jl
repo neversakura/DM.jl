@@ -24,12 +24,13 @@ export walk_entry_file
 export save_to_index_file, get_root, get_params_fmt, get_name, readgroups
 
 # dev APIs
+# del_index, add2_index
 
 # new public APIs
 # TODO: refractor the APIs above
 export save, load, check, delete
 export load_entry, delete_entry
-export set_index, get_index, del_index, add2_index
+export set_index, get_index 
 export truncate_params
 
 end # end module
