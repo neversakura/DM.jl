@@ -55,6 +55,13 @@ function delete(d::DataEntry, v::AbstractDataFrame)
     del_index(d, v)
 end
 
+function delete(d::DataEntry, v::DataFrameRow)
+    data_name = v["data"]
+    file_path, group_path, ext = processing_path(d, v)
+    delete(file_path, group_path, ext, data_name)
+    del_index(d, v)
+end
+
 function check(file_path::AbstractString, group_path::AbstractString, ext, groups...)
     if isfile(file_path)
         f = _get_function("check_", ext)

@@ -177,6 +177,19 @@ function del_index(d::DataEntry, subframe::AbstractDataFrame)
     empty ? rm(file_path) : nothing
 end
 
+function del_index(d::DataEntry, framerow::DataFrameRow)
+    file_path = joinpath(d.root, "index_entry.jld2") 
+    empty = jldopen(file_path, "r+") do f
+        dsub = query_data_frame_con(f[d.name], framerow)
+        delete!(f, d.name)
+        if !isempty(dsub)
+            f[d.name] = dsub
+        end
+        isempty(f|>keys)
+    end
+    empty ? rm(file_path) : nothing
+end
+
 function del_file_from_index(d::DataEntry, file_name)
     file_path = joinpath(d.root, "index_entry.jld2")
     empty = jldopen(file_path, "r+") do f
@@ -213,6 +226,15 @@ function query_data_frame_con(df, vals, fn, dn::AbstractArray)
         @where any((x) -> getproperty(i, x) != vals_str[x], vals_keys) || !(getproperty(i, :data) ∈ dn)
         @select i
         @collect DataFrame
+    end
+end
+
+function query_data_frame_con(df, framerow::DataFrameRow)
+    vals_keys = [Symbol(k) for k in names(framerow)]
+    @from i in df begin
+        @where any((x) -> getproperty(i, x) != framerow[x], vals_keys)
+        @select i
+        @collect DataFrame 
     end
 end
 
