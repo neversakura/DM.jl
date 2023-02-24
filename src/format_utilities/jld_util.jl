@@ -34,10 +34,12 @@ function check_jld2(
     end
 end
 
-function delete_jld2(file_path::AbstractString, group_path::AbstractString, group_name)
-    group = group_path * "/" * group_name
+function delete_jld2(file_path::AbstractString, group_path::AbstractString, group_names...)
     empty = jldopen(file_path, "r+") do f
-        delete!(f, group)
+        for group_name in group_names
+            group = group_path * "/" * group_name
+            delete!(f, group)
+        end
         isempty(f[group_path]) ? delete!(f, group_path) : nothing
         isempty(f)
     end
